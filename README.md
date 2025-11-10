@@ -1,19 +1,25 @@
-# Emotion-Driven Markets: Social Media Sentiment and NASDAQ Movements
+<h1 align="center"> Emotion-Driven Markets:<br>Social Media Sentiment and NASDAQ Movements</h1>
+
+<p align="center">
+  <em>Data Science & Advanced Programming – HEC Lausanne (Fall 2025)</em><br>
+  <strong>Author:</strong> Livio Manzinali  
+</p>
 
 ## Abstract
 
-This project investigates the relationship between **social media sentiment** and **short-term fluctuations** in the **NASDAQ Composite Index**.  
-Using natural language processing (NLP) and financial data analysis, the study examines whether shifts in public tone regarding major NASDAQ-listed companies—such as Apple, Tesla, and Amazon—correlate with or precede market movements.  
-By applying the **FinBERT** transformer model for sentiment classification on historical tweets and merging these results with market data from **Yahoo Finance**, the project contributes to understanding how digital sentiment interacts with financial markets.
+This project explores the link between **social media sentiment** and **short-term fluctuations** in the **NASDAQ Composite Index**.  
+Using advanced **Natural Language Processing (NLP)** and **financial data analysis**, it investigates whether variations in the public tone surrounding major NASDAQ-listed companies — such as Apple, Tesla, and Amazon — correspond to or anticipate movements in the market index.  
 
+By applying the **FinBERT** transformer model for financial sentiment analysis and combining the results with market data from **Yahoo Finance**, this research provides insights into the relationship between **digital emotions** and **market dynamics**, contributing to the broader field of behavioral finance.
 
 ## 1. Context and Motivation
 
-In modern financial markets, investor psychology and public opinion play a critical role in shaping price dynamics.  
-Platforms such as **Twitter** serve as real-time reflections of collective sentiment, and viral reactions or influential statements can instantly affect asset valuations.  
-This project builds on behavioral finance theory by quantifying whether aggregated online sentiment can explain or anticipate short-term NASDAQ movements.  
-Beyond potential predictive insights, it aims to shed light on how efficiently markets integrate public information from social media.
+Investor psychology and collective sentiment play a critical role in shaping financial markets.  
+Platforms such as **Twitter** have become real-time reflections of public opinion, where viral posts and influential statements can immediately influence stock valuations.  
 
+This project extends behavioral finance research by **quantifying the emotional pulse of investors online** and assessing whether aggregated sentiment can predict or accompany short-term changes in the NASDAQ index.  
+
+Beyond predictive potential, it also aims to evaluate how efficiently financial markets absorb and react to information circulating on social media platforms.
 
 ## 2. Research Objective and Questions
 
@@ -23,7 +29,6 @@ The main objective is to determine whether **social media sentiment** is **stati
 1. Does aggregated sentiment about major NASDAQ companies correlate with daily market returns?  
 2. Are sentiment shifts leading or lagging indicators of market movements?  
 3. Can sentiment-based features enhance short-term predictive financial models?
-
 
 ## 3. Methodology Overview
 
@@ -46,7 +51,6 @@ The project follows a structured workflow combining NLP and quantitative finance
    - Compare time series of sentiment and market performance.  
    - Identify periods where sentiment trends preceded major market moves.
 
-
 ## 4. Repository Structure
 
 ```text
@@ -65,7 +69,6 @@ emotion-driven-markets/
 ├── CONTRIBUTING.md            # Development guidelines
 └── README.md                  # Overview and documentation
 ```
-
 
 ## 5. Installation and Usage
 
