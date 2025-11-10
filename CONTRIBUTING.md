@@ -22,7 +22,7 @@ The recommended environment is **Python 3.10+** with **Visual Studio Code** as I
 emotion-driven-markets/
 │
 ├── data/                # Raw and processed datasets
-├── notebooks/           # Jupyter/VS Code notebooks for exploration and analysis
+├── notebooks/           # VS Code notebooks for exploration and analysis
 ├── src/                 # Core scripts: preprocessing, sentiment analysis, correlations
 ├── reports/             # Generated figures and final report
 ├── tests/               # Basic validation tests
@@ -62,8 +62,6 @@ def clean_tweets(df: pd.DataFrame) -> pd.DataFrame:
 - Processed or intermediate files should be saved under `data/processed/` or `reports/`.  
 - Do **not** commit large raw data files to GitHub; use `.gitignore` for protection.  
 - All scripts should be deterministic and reproducible (no random seeds left uncontrolled).
-
----
 
 ## 4. Version Control and Reproducibility
 
