@@ -1,377 +1,114 @@
-# Contributing to MLFinance
+# Contributing to Emotion-Driven Markets
 
-Thank you for considering contributing to MLFinance! This document provides guidelines and instructions for contributing to the project.
+This document describes the development workflow, structure, and coding guidelines for the project **"Emotion-Driven Markets: Social Media Sentiment and NASDAQ Movements"**, conducted as part of the *Data Science and Advanced Programming (DSAP 2025)* course at HEC Lausanne.
 
-## 🎯 Development Philosophy
+Although this is an **individual academic project**, the following guidelines ensure clarity, reproducibility, and consistency throughout the codebase.
 
-This project enforces strict software engineering practices. All contributions must:
+## 1. Development Workflow
 
-1. **Pass ALL quality checks** - No exceptions
-2. **Include comprehensive tests** - Minimum 80% coverage
-3. **Be fully typed** - MyPy runs in strict mode
-4. **Follow code style** - Enforced by Black, Ruff, and isort
-5. **Include documentation** - Google-style docstrings for all public APIs
+### Repository Setup
+To reproduce or extend this project:
 
-## 🚀 Getting Started
-
-1. **Fork the repository** on GitHub
-2. **Clone your fork** locally:
-   ```bash
-   git clone https://github.com/YOUR-USERNAME/mlfinance.git
-   cd mlfinance
-   ```
-
-3. **Set up development environment**:
-   ```bash
-   # Install uv package manager
-   pip install uv
-   
-   # Install all development dependencies
-   make install-dev
-   ```
-
-4. **Create a feature branch**:
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-
-## 📝 Development Workflow
-
-### Before You Start Coding
-
-1. **Run initial checks** to ensure everything works:
-   ```bash
-   make check
-   ```
-
-2. **Understand the codebase**:
-   - Read existing code and tests
-   - Check type hints and documentation
-   - Review the project structure
-
-### While Coding
-
-1. **Write tests first** (TDD approach recommended):
-   ```python
-   def test_new_feature():
-       """Test description."""
-       # Arrange
-       # Act
-       # Assert
-   ```
-
-2. **Add type hints** to ALL functions:
-   ```python
-   def calculate(value: float, factor: int = 2) -> float:
-       """Calculate adjusted value."""
-       return value * factor
-   ```
-
-3. **Document your code**:
-   ```python
-   def complex_function(
-       param1: str,
-       param2: Optional[int] = None
-   ) -> Dict[str, Any]:
-       """Brief description.
-       
-       Args:
-           param1: Description of param1.
-           param2: Description of param2. Defaults to None.
-       
-       Returns:
-           Description of return value.
-       
-       Raises:
-           ValueError: When invalid input provided.
-       
-       Examples:
-           >>> complex_function("test")
-           {"result": "test"}
-       """
-   ```
-
-4. **Run checks frequently**:
-   ```bash
-   make format  # Auto-format code
-   make lint    # Check for issues
-   make type-check  # Verify types
-   make test    # Run tests
-   ```
-
-### Before Committing
-
-1. **Run full quality check**:
-   ```bash
-   make check
-   ```
-
-2. **Fix any issues**:
-   ```bash
-   make fix  # Auto-fix what's possible
-   ```
-
-3. **Ensure tests pass with coverage**:
-   ```bash
-   make test
-   ```
-
-## 🧪 Testing Guidelines
-
-### Test Structure
-
-```python
-import pytest
-from hypothesis import given, strategies as st
-
-class TestFeature:
-    """Test suite for Feature."""
-    
-    def test_basic_functionality(self):
-        """Test basic feature behavior."""
-        # Test implementation
-        
-    @pytest.mark.parametrize("input,expected", [
-        ("A", 1),
-        ("B", 2),
-    ])
-    def test_with_parameters(self, input, expected):
-        """Test with different inputs."""
-        # Test implementation
-        
-    @given(value=st.integers())
-    def test_property_based(self, value):
-        """Property-based test."""
-        # Test implementation
+```bash
+git clone https://github.com/your-username/emotion-driven-markets.git
+cd emotion-driven-markets
+pip install -r requirements.txt
 ```
 
-### Coverage Requirements
+The recommended environment is **Python 3.10+** with **Visual Studio Code** as IDE.
 
-- Minimum 80% code coverage
-- Test both happy paths and edge cases
-- Include integration tests for complex features
-- Use property-based testing where appropriate
+### Project Structure
+```text
+emotion-driven-markets/
+│
+├── data/                # Raw and processed datasets
+├── notebooks/           # Jupyter/VS Code notebooks for exploration and analysis
+├── src/                 # Core scripts: preprocessing, sentiment analysis, correlations
+├── reports/             # Generated figures and final report
+├── tests/               # Basic validation tests
+├── PROJECT_SPECIFICATION.md   # Project overview and objectives
+├── CONTRIBUTING.md            # This document
+└── README.md                  # Main documentation
+```
 
-## 🎨 Code Style
+## 2. Coding Guidelines
 
-### Python Style
+- **Language:** Python 3.10+  
+- **Naming conventions:** Use clear, descriptive snake_case for variables and functions.  
+- **Documentation:** Every function should include a concise docstring following the Google style.  
+- **Imports:** Group standard, third-party, and local imports separately.  
+- **Line length:** ≤ 100 characters recommended.  
+- **Comments:** Explain reasoning, not just operations.
 
-- **Line length**: 100 characters maximum
-- **Imports**: Sorted with isort
-- **Formatting**: Black with default settings
-- **Linting**: Ruff with extensive rules
-- **Docstrings**: Google style
-
-### Example Code
-
+### Example
 ```python
-"""Module docstring."""
-
-from __future__ import annotations
-
-from typing import Any, Dict, List, Optional
-
-import numpy as np
-import pandas as pd
-
-from mlfinance.base import BaseClass
-
-
-class ExampleClass(BaseClass):
-    """Example class with proper style.
+def clean_tweets(df: pd.DataFrame) -> pd.DataFrame:
+    """Clean and normalize tweet text.
     
-    Attributes:
-        name: The name of the instance.
-        value: The current value.
+    Removes URLs, mentions, hashtags, and special characters.
+    Converts text to lowercase and trims extra spaces.
+    
+    Args:
+        df: Raw tweet dataset.
+    Returns:
+        DataFrame with cleaned tweet text.
     """
-    
-    def __init__(self, name: str, value: float = 0.0) -> None:
-        """Initialize ExampleClass.
-        
-        Args:
-            name: Instance name.
-            value: Initial value. Defaults to 0.0.
-        """
-        self.name = name
-        self.value = value
-    
-    def process(self, data: List[float]) -> np.ndarray:
-        """Process data.
-        
-        Args:
-            data: Input data to process.
-            
-        Returns:
-            Processed data as numpy array.
-            
-        Raises:
-            ValueError: If data is empty.
-        """
-        if not data:
-            raise ValueError("Data cannot be empty")
-        
-        return np.array(data) * self.value
+    ...
 ```
 
-## 📊 Type Checking
+## 3. Data Management
 
-### Strict MyPy Configuration
+- Raw datasets are stored under `data/`.  
+- Processed or intermediate files should be saved under `data/processed/` or `reports/`.  
+- Do **not** commit large raw data files to GitHub; use `.gitignore` for protection.  
+- All scripts should be deterministic and reproducible (no random seeds left uncontrolled).
 
-All code must pass MyPy in strict mode:
+---
 
+## 4. Version Control and Reproducibility
+
+- Use clear and atomic commit messages (e.g., `feat: add sentiment aggregation` or `fix: clean null timestamps`).  
+- Keep the repository organized and avoid committing unnecessary files.  
+- Periodically push commits to GitHub to maintain backup and version history.  
+- Code execution should produce the same results when rerun on the same data.
+
+## 5. Testing and Validation
+
+Although this project does not require industrial-level test coverage, basic checks are encouraged:
+
+- Verify data loading and cleaning functions behave as expected.  
+- Confirm sentiment scoring with FinBERT returns valid labels.  
+- Validate that data merging preserves date alignment.  
+
+Example:
 ```python
-# Good - Fully typed
-def calculate_average(values: List[float]) -> float:
-    """Calculate average of values."""
-    if not values:
-        raise ValueError("Cannot calculate average of empty list")
-    return sum(values) / len(values)
-
-# Bad - Missing type hints
-def calculate_average(values):
-    return sum(values) / len(values)
+def test_sentiment_labels():
+    result = analyze_sentiment("The company is performing well.")
+    assert result in ["positive", "neutral", "negative"]
 ```
 
-### Common Type Patterns
+## 6. Style and Quality Checks
 
-```python
-from typing import (
-    Any, Callable, Dict, List, Literal, 
-    Optional, Protocol, Tuple, TypeVar, Union
-)
-
-T = TypeVar("T")
-
-class Processor(Protocol):
-    """Protocol for processors."""
-    
-    def process(self, data: Any) -> Any: ...
-
-def generic_function(
-    items: List[T],
-    processor: Callable[[T], T],
-    config: Optional[Dict[str, Any]] = None
-) -> List[T]:
-    """Process items with given processor."""
-    config = config or {}
-    return [processor(item) for item in items]
-```
-
-## 🔄 Pull Request Process
-
-1. **Ensure all checks pass**:
-   ```bash
-   make ci  # Simulate full CI pipeline
-   ```
-
-2. **Update documentation** if needed
-
-3. **Write clear commit messages**:
-   ```
-   feat: add new strategy implementation
-   
-   - Implement AlwaysCooperate strategy
-   - Add comprehensive tests
-   - Update documentation
-   
-   Closes #123
-   ```
-
-4. **Create Pull Request**:
-   - Use descriptive title
-   - Fill out PR template
-   - Link related issues
-   - Request review from maintainers
-
-### PR Checklist
-
-- [ ] Code follows project style guidelines
-- [ ] All tests pass with >80% coverage
-- [ ] Type checking passes (MyPy strict mode)
-- [ ] Documentation is updated
-- [ ] Pre-commit hooks pass
-- [ ] No security vulnerabilities
-- [ ] PR description explains changes
-
-## 🐛 Reporting Issues
-
-### Bug Reports
-
-Include:
-- Python version
-- OS information
-- Steps to reproduce
-- Expected behavior
-- Actual behavior
-- Error messages/traceback
-
-### Feature Requests
-
-Include:
-- Use case description
-- Proposed implementation
-- Alternative solutions considered
-- Impact on existing code
-
-## 🏗️ Project Structure
-
-```
-src/mlfinance/        # Main package
-├── __init__.py    # Public API exports
-├── cli.py         # CLI interface
-├── triangle.py    # Triangle data structures
-├── mack.py        # Mack chain-ladder implementation
-└── bootstrap.py   # Bootstrap simulation
-
-tests/             # Test suite
-├── conftest.py    # Pytest fixtures
-├── test_*.py      # Test modules
-└── data/          # Test data
-
-docs/              # Documentation
-├── api/           # API documentation
-└── guides/        # User guides
-```
-
-## 🛠️ Development Tools
-
-### Essential Commands
+Before committing code:
 
 ```bash
-make help          # Show all commands
-make check         # Run all checks
-make fix           # Auto-fix issues
-make test          # Run tests
-make ci            # Simulate CI
+# Format and lint code
+black src/
+ruff src/
+
+# Run quick validation
+pytest tests/
 ```
 
-### Debugging
+Optional but recommended tools:  
+- **Black** – automatic code formatting  
+- **Ruff** – linting for code quality  
+- **pytest** – lightweight testing
 
-```bash
-# Detailed type errors
-mypy src/ --show-error-codes --pretty
+## 7. Acknowledgements
 
-# Verbose test output
-pytest -vvs
+This repository is developed as part of the **MSc in Finance – Data Science and Advanced Programming (DSAP 2025)** course at **HEC Lausanne**, under the supervision of *Prof. Simon Scheidegger* and *Dr. Anna Smirnova*.
 
-# Profile performance
-python -m cProfile -s cumulative script.py
-
-# Check coverage gaps
-make test && open htmlcov/index.html
-```
-
-## 📜 Code of Conduct
-
-- Be respectful and inclusive
-- Accept constructive criticism
-- Focus on what's best for the project
-- Show empathy towards other contributors
-
-## 📄 License
-
-By contributing, you agree that your contributions will be licensed under the project's MIT License.
-
-## 🙏 Thank You!
-
-Your contributions make this project better. We appreciate your time and effort in maintaining high code quality standards!
+> **Note:**  
+> These guidelines are designed for academic clarity and reproducibility rather than open-source collaboration.  
+> All work is individual and evaluated within the context of the DSAP 2025 course.
