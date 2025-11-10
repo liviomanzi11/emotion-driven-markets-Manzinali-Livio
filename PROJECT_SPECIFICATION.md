@@ -76,13 +76,14 @@ Even if no strong predictive relationship is found, the research will provide va
 
 ## 7. Repository Structure
 
+```text
 project_root/
 │
-├── data/ # Raw and processed datasets
-├── notebooks/ # Jupyter notebooks for analysis
-├── src/ # Source code (data processing, NLP, visualization)
-├── reports/ # Generated figures and final report
-└── README.md # Project overview and instructions
+├── data/                # Raw and processed datasets
+├── notebooks/           # Analysis scripts (if any)
+├── src/                 # Source code (data processing, NLP, visualization)
+├── reports/             # Generated figures and final report
+└── README.md            # Project overview and instructions
 
 
 ## 8. Summary
