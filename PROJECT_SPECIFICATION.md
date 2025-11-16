@@ -2,91 +2,103 @@
 
 ## 0. Introduction
 
-In recent years, social media has become a powerful reflection of public opinion and market sentiment.  
-Investors, journalists, and even automated trading systems continuously react to online discussions, particularly those concerning major technology companies.  
-Understanding how such digital emotions interact with financial markets is crucial for both behavioral finance research and practical investment strategies.
+In recent years, social media has become a central space for expressing opinions that influence public sentiment and investor behavior. Platforms such as **Twitter** play a crucial role in shaping market expectations, particularly for large technology companies that dominate the **NASDAQ Composite Index**. 
+
+Understanding whether these online emotions can help explain or predict market dynamics has become a relevant question in both **behavioral finance** and **applied data science**.
+
+This project aims to bridge the gap between textual sentiment analysis and quantitative market modeling. By combining **Natural Language Processing (NLP)** and **machine learning**, it investigates whether social media sentiment provides predictive insights into short-term financial fluctuations.
+
 
 ## 1. Project Overview
 
-The purpose of this project is to analyze how **sentiment expressed on social media** about major **NASDAQ-listed companies** relates to **short-term market movements**.  
-The main objective is to determine whether shifts in the collective tone of discussions — positive, neutral, or negative — **correspond to or anticipate variations in the NASDAQ index**.
+The objective of this project is to **predict short-term NASDAQ movements** using a combination of **Twitter sentiment** and **technical market indicators**. The analysis focuses on financial tweets about major NASDAQ-listed firms such as Apple, Tesla, Amazon, and Google, combined with historical market data retrieved from Yahoo Finance.  
 
-In the digital era, investors are increasingly influenced by online information flows. Tweets, public statements, or viral reactions from influential figures can immediately impact stock prices. Understanding this dynamic provides insight into both **market behavior** and **investor psychology**.
+Unlike previous correlation-based studies, this project treats the question as a **supervised learning problem**, comparing models trained with and without sentiment-related variables. The goal is to determine whether sentiment extracted from social media improves predictive accuracy relative to a purely quantitative baseline.
+
 
 ## 2. Research Question / Problem Statement
 
-The central research question guiding this project is:
+The main research question is:
 
-> **Can social media sentiment about major NASDAQ companies help explain or predict short-term movements in the NASDAQ Composite Index?**
+> **Does social media sentiment improve the ability of machine learning models to predict short-term movements in the NASDAQ Composite Index?**
 
-This leads to several sub-questions:
-- Do changes in public sentiment precede or follow market fluctuations?
-- Which companies or sectors show the strongest sentiment-market relationships?
-- Can sentiment data improve short-term predictive models of market behavior?
+This raises three sub-questions:
+- Can sentiment-based features derived from Twitter enhance market prediction compared to technical indicators alone?  
+- Do shifts in sentiment precede or follow market changes?  
+- Which modeling approach best captures the relationship between sentiment and short-term returns?  
+
 
 ## 3. Datasets
 
-The analysis will combine textual and financial data from open sources:
+The analysis combines textual and financial data from multiple open sources:
 
-- **Financial Sentiment Analysis (Kaggle)** — Labeled financial sentences from news and tweets, used for evaluating and fine-tuning FinBERT.  
-- **Tweets about Top NASDAQ Companies (2015–2020)** — A dataset of tweets related to major companies such as Apple, Tesla, Amazon, and Google, used to compute daily sentiment.  
-- **Yahoo Finance (^IXIC)** — NASDAQ Composite index data for the same period, retrieved via the `yfinance` Python library.
+- **Financial Sentiment Analysis (Kaggle)** — Labeled financial sentences used to evaluate and calibrate FinBERT’s performance.  
+- **Tweets about Top NASDAQ Companies (2015–2020)** — A dataset containing tweets about major firms such as Apple, Tesla, and Amazon, used to compute daily sentiment indicators.  
+- **Yahoo Finance (^IXIC)** — Historical NASDAQ Composite data (prices, returns, volatility) obtained through the `yfinance` API.  
 
-These datasets together allow for a **multi-modal approach**, linking language (sentiment) with quantitative market indicators.
+All datasets will be cleaned, normalized, and aligned by trading date to create a unified feature table containing both textual and quantitative information.
+
 
 ## 4. Methodology
 
-### Step 1 – Data Preparation
-- Load and clean tweet data (remove duplicates, URLs, mentions, and special characters).  
-- Convert timestamps and align tweets with NASDAQ trading days.  
-- Aggregate tweets by date to compute a daily sentiment overview.
+The project follows a structured workflow combining NLP-based sentiment analysis, financial feature engineering, and predictive modeling.  
 
-### Step 2 – Sentiment Analysis (NLP)
-- Use **FinBERT**, a pre-trained transformer model specialized in financial language, to classify each tweet as positive, neutral, or negative.  
-- Compute daily average sentiment scores and proportions of each sentiment class.
+### Step 1 – Data Preparation  
+Tweets will be cleaned to remove duplicates, URLs, and special characters, and their timestamps will be aligned with market trading days. Historical NASDAQ data will be retrieved via `yfinance`, and technical indicators such as moving averages, RSI, and volatility will be computed using the `ta` library.  
 
-### Step 3 – Market Comparison
-- Retrieve NASDAQ index data using the `yfinance` library.  
-- Merge daily sentiment metrics with NASDAQ returns by date.  
-- Analyze correlations between daily sentiment changes and market returns or volatility.  
-- Optionally, test predictive relationships using simple regression or classification models.
+### Step 2 – Sentiment Analysis (NLP)  
+The **FinBERT** transformer model will be applied to classify tweets as *positive*, *neutral*, or *negative*. Daily averages and polarity ratios will then be computed to produce sentiment indicators representing the prevailing market tone.
 
-### Step 4 – Visualization & Interpretation
-- Plot the evolution of sentiment versus NASDAQ performance.  
-- Highlight periods where strong negative sentiment preceded significant market drops.  
-- Summarize findings and interpret them in the context of **behavioral finance** and **market efficiency**.
+### Step 3 – Predictive Modeling  
+The dataset will include two feature sets:
+- **Baseline model:** technical indicators only;  
+- **Hybrid model:** combination of sentiment and technical indicators.  
+
+Models such as **Logistic Regression**, **Random Forest**, and **XGBoost** will be trained to predict the next-day market direction. Temporal validation will be used to simulate real predictive performance (train: 2015–2018, test: 2019–2020).
+
+### Step 4 – Evaluation  
+Model performance will be assessed using **accuracy**, **F1-score**, and **ROC-AUC** metrics. Feature importance and visualization techniques will help interpret which factors—sentiment or technical—drive the model’s predictions.
+
 
 ## 5. Tools and Libraries
 
 - **Python 3.10+**  
 - **Pandas, NumPy, Matplotlib, Seaborn** – Data manipulation and visualization  
-- **Transformers (FinBERT)** – Sentiment classification  
-- **yfinance** – Financial data retrieval  
-- **Scikit-learn** – Regression and classification analysis  
-- **Visual Studio Code** – Main development environment and documentation
+- **Transformers (FinBERT)** – Financial sentiment analysis  
+- **yfinance, ta** – Market data and technical indicators  
+- **Scikit-learn, XGBoost** – Machine learning and model evaluation  
+- **VS Code / Jupyter Notebook** – Development environment  
+
 
 ## 6. Expected Outcomes
 
-The project aims to evaluate whether **social media sentiment correlates with or predicts short-term NASDAQ movements**.  
-Even if no strong predictive relationship is found, the research will provide valuable insights into:
+The project aims to assess whether sentiment-based features add measurable predictive value to models of short-term NASDAQ performance. It is expected that a hybrid model combining both sentiment and technical features will outperform a purely quantitative baseline. 
 
-- How collective online emotions evolve alongside financial trends;  
-- Whether markets efficiently integrate public sentiment;  
-- The broader role of **digital sentiment** in modern investor behavior.
+Even if the predictive gains are limited, the study will provide valuable insights into how digital sentiment and investor emotions interact with financial market dynamics.
+
 
 ## 7. Repository Structure
 
 ```text
-project_root/
+emotion-driven-markets/
 │
 ├── data/                # Raw and processed datasets
-├── notebooks/           # Analysis scripts (if any)
-├── src/                 # Source code (data processing, NLP, visualization)
-├── reports/             # Generated figures and final report
-└── README.md            # Project overview and instructions
+├── notebooks/           # Exploratory and model analysis notebooks
+├── src/                 # Source code (data processing, NLP, ML)
+│   ├── preprocessing.py
+│   ├── sentiment_extraction.py
+│   ├── feature_engineering.py
+│   ├── model_training.py
+│   └── evaluation.py
+├── results/             # Figures, reports, and model outputs
+├── tests/               # Unit tests for preprocessing and modeling
+├── PROJECT_SPECIFICATION.md   # Detailed project description
+├── PROPOSAL.md                # Project proposal document
+└── README.md                  # Project overview and documentation
 ```
 
 ## 8. Summary
 
-This project combines **Natural Language Processing (FinBERT)**, **financial data analysis**, and **behavioral finance concepts** to study the connection between online emotions and market behavior.  
-It uses open datasets and a reproducible Python-based workflow to demonstrate both **technical and analytical skills** relevant to applied data science in finance.
+This project combines Natural Language Processing, financial feature engineering, and machine learning to investigate whether online sentiment provides useful signals for market prediction. 
+
+By integrating textual data from social media with quantitative indicators, it seeks to evaluate the predictive potential of collective investor sentiment and its role in short-term NASDAQ dynamics.
