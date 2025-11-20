@@ -251,3 +251,8 @@ __marimo__/
 # ── OS & misc junk ────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
+# Raw data
+data/raw/*.csv
+
+# Processed data (large outputs)
+data/processed/*.csv
