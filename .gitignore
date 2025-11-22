@@ -253,6 +253,5 @@ __marimo__/
 Thumbs.db
 # Raw data
 data/raw/*.csv
-
 # Processed data (large outputs)
 data/processed/*.csv
