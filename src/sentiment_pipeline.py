@@ -77,7 +77,6 @@ def aggregate(df):
 
 def main():
     df = load_and_merge()
-    df = df.sample(n=100, random_state=42).reset_index(drop=True)
 
     df["clean_text"] = df["body"].apply(clean_text)
     df = df[df["clean_text"] != ""]
