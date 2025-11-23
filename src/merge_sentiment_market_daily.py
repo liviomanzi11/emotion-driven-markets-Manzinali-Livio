@@ -1,75 +1,58 @@
 import pandas as pd
 from pathlib import Path
 
-# Load sentiment and market data CSVs
+# Path Configuration
+# Get base project directory (one level up from the script location)
+BASE = Path(__file__).resolve().parents[1]
+# Define path to processed data
+PROC = BASE / "data" / "processed"
+
+# Input files
+GLOBAL_SENT = PROC / "global_sentiment_daily.csv"
+NASDAQ_DATA = PROC / "nasdaq_market_data.csv"
+
+# Output merged file
+OUT_MERGED = PROC / "merged_sentiment_market.csv"
+
+# Load global sentiment and NASDAQ market data
 def load_data():
-    # Build portable path to /data/processed
-    base = Path(__file__).resolve().parents[1]
-    processed = base / "data" / "processed"
+    # Load global daily sentiment file
+    df_sent = pd.read_csv(GLOBAL_SENT)
+    # Load NASDAQ OHLCV data
+    df_mkt = pd.read_csv(NASDAQ_DATA)
 
-    # Load daily company sentiment
-    df_sent = pd.read_csv(processed / "company_sentiment_daily.csv")
-
-    # Load daily market OHLCV data
-    df_mkt = pd.read_csv(processed / "market_data.csv")
-
-    # Standardize column names
-    df_sent.columns = df_sent.columns.str.lower().str.strip()
-    df_mkt.columns = df_mkt.columns.str.lower().str.strip()
-
-    # Convert date to datetime.date
-    df_sent["date"] = pd.to_datetime(df_sent["date"], errors="coerce").dt.date
-    df_mkt["date"] = pd.to_datetime(df_mkt["date"], errors="coerce").dt.date
-
-    # Remove invalid dates
-    df_sent = df_sent.dropna(subset=["date"])
-    df_mkt = df_mkt.dropna(subset=["date"])
+    # Ensure date columns are parsed correctly
+    df_sent["date"] = pd.to_datetime(df_sent["date"]).dt.date
+    df_mkt["date"] = pd.to_datetime(df_mkt["date"]).dt.date
 
     return df_sent, df_mkt
 
-
-# Merge sentiment & market data
+# Merge global sentiment with NASDAQ market data
 def merge_data(df_sent, df_mkt):
-
-    # Verify required merge columns exist
-    for col in ["ticker_symbol", "date"]:
-        if col not in df_sent.columns:
-            raise KeyError(f"Missing column in sentiment file: {col}")
-        if col not in df_mkt.columns:
-            raise KeyError(f"Missing column in market data: {col}")
-
-    # Merge on ticker + date
+    # Merge datasets on the common 'date' column
     merged = pd.merge(
-        df_mkt,     # OHLCV first
-        df_sent,    # sentiment next
-        on=["ticker_symbol", "date"],
-        how="inner" # keep only matching rows
+        df_mkt,          # Market data first
+        df_sent,         # Sentiment daily
+        on="date",
+        how="inner"      # Keep only matching rows
     )
-
     return merged
 
-
-# Main execution
+# Main Execution Pipeline
 def main():
-    print("Loading data...")
+    # Load sentiment and market data
     df_sent, df_mkt = load_data()
 
-    print("Merging datasets...")
+    # Perform merge operation
     merged = merge_data(df_sent, df_mkt)
 
-    # Output path
-    output_path = (
-        Path(__file__).resolve().parents[1]
-        / "data" / "processed" / "merged_sentiment_market.csv"
-    )
+    # Save merged dataset
+    merged.to_csv(OUT_MERGED, index=False)
 
-    # Save merged file
-    merged.to_csv(output_path, index=False)
-
-    print("\nMerge complete!")
-    print(f"Saved to: {output_path}")
-    print(f"Final shape: {merged.shape}")
-
+    # Print success information
+    print("\nMerged dataset created successfully:\n")
+    print(f"- Rows: {len(merged)}")
+    print(f"- Saved to: {OUT_MERGED}")
 
 if __name__ == "__main__":
     main()
