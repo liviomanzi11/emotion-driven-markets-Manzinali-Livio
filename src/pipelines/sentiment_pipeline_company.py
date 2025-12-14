@@ -140,7 +140,9 @@ def main():
     df = load_and_merge()
 
     if full_file_exists:
-        print("\n✓ Detected existing tweet_sentiment.csv -> running SAMPLE FinBERT test.\n")
+        print("\n[OK] Detected cached tweet_sentiment.csv (100% reproducible)")
+        print("     File: data\\processed\\tweet_sentiment.csv")
+        print("     Running SAMPLE FinBERT test to verify model setup.\n")
 
         # Keep only a sample of tweets (EARLY sampling to avoid loading everything)
         df = df.sample(n=min(len(df), SAMPLE_SIZE), random_state=42).reset_index(drop=True)
@@ -172,12 +174,12 @@ def main():
         # SAMPLE OUTPUT
         df.to_csv(OUT_TWEET_SENTIMENT_SAMPLE, index=False)
 
-        print("\n✓ Sample FinBERT output generated:")
-        print(f"  - {OUT_TWEET_SENTIMENT_SAMPLE.name}")
-        print("\n✓ Using existing FULL tweet_sentiment.csv for the rest of the pipeline.\n")
+        print("\n[OK] Sample FinBERT output generated:")
+        print(f"     File: data\\processed\\samples\\{OUT_TWEET_SENTIMENT_SAMPLE.name}")
+        print("\n[OK] Using cached FULL tweet_sentiment.csv for pipeline.\n")
         return
 
-    print("\n⚠️  No tweet_sentiment.csv found -> running FULL FinBERT inference.\n")
+    print("\n[WARNING] No tweet_sentiment.csv found -> running FULL FinBERT inference.\n")
     print("⚠️  This will take several hours for all tweets...\n")
 
     # Apply text cleaning
@@ -206,8 +208,8 @@ def main():
     # Save tweet-level sentiment
     df.to_csv(OUT_TWEET_SENTIMENT, index=False)
 
-    print("\n✓ Full FinBERT inference complete.")
-    print(f"  - {OUT_TWEET_SENTIMENT.name} ({len(df):,} tweets)\n")
+    print("\n[OK] Full FinBERT inference complete.")
+    print(f"     File: data\\processed\\tweet_sentiment.csv ({len(df):,} tweets)\n")
 
 
 if __name__ == "__main__":

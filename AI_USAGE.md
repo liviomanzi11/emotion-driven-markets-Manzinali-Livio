@@ -12,7 +12,7 @@ This document describes how AI tools were used throughout the project developmen
 
 ### 1. GitHub Copilot
 **Purpose:** Code autocompletion and boilerplate generation  
-**Usage frequency:** Moderate (30-40% of code)
+**Usage frequency:** Moderate
 
 **Examples:**
 - Autocomplete for pandas data manipulation patterns
@@ -24,26 +24,27 @@ This document describes how AI tools were used throughout the project developmen
 
 ### 2. ChatGPT (GPT-4)
 **Purpose:** Debugging, documentation, and conceptual help  
-**Usage frequency:** Regular (for specific problems)
+**Usage frequency:** Moderate
 
 **Examples:**
-- Debugging TensorFlow/Keras reproducibility issues
 - Understanding FinBERT model architecture
 - Clarifying sklearn API documentation
 - Generating initial README structure
-- Troubleshooting environment setup errors
 
 **Review process:** All generated code tested and modified for project context
 
 ### 3. Claude (Anthropic)
-**Purpose:** Code review and architecture discussions  
-**Usage frequency:** Occasional
+**Purpose:** Code review, debugging, and documentation assistance  
+**Usage frequency:** Regular
 
 **Examples:**
 - Reviewing feature engineering logic
 - Discussing backtest strategy implementation
 - Code quality improvements
 - Project structure organization
+- **Debugging TensorFlow/Keras reproducibility issues:** Troubleshooting deterministic behavior (CPU-only execution, single-threading, seeded initializers)
+- **Troubleshooting environment setup errors:** Resolving conda environment conflicts and dependency version issues
+- **LaTeX formatting and report structure:** Assistance with project_report.tex formatting, table layouts, figure placements, and bibliography management
 
 ## What AI Did NOT Do
 
@@ -61,12 +62,6 @@ Using AI tools helped me:
 3. **Debug efficiently** by getting suggestions for error patterns
 4. **Write better documentation** through initial templates
 
-However, I ensured:
-- **Full understanding** of all code in the final submission
-- **Manual validation** of AI suggestions against documentation
-- **Original problem-solving** for core project challenges
-- **Independent debugging** when AI suggestions failed
-
 
 ## Conclusion
 
@@ -74,4 +69,4 @@ AI tools served as **productivity assistants**, not replacements for learning. T
 
 ---
 
-*Date: December 1, 2025*
+*Date: December 12, 2025*

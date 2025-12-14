@@ -1,24 +1,18 @@
-# =============================================
 # OS FILES
-# =============================================
 .DS_Store
 Thumbs.db
 *.swp
 *.swo
 *~
 
-# =============================================
 # PYTHON CACHE & COMPILED
-# =============================================
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 *.pyc
 
-# =============================================
 # VIRTUAL ENVIRONMENTS
-# =============================================
 .env
 .venv
 env/
@@ -27,9 +21,7 @@ ENV/
 env.bak/
 venv.bak/
 
-# =============================================
 # IDE & EDITORS
-# =============================================
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -40,45 +32,33 @@ venv.bak/
 *.swp
 *.swo
 
-# =============================================
 # JUPYTER NOTEBOOKS
-# =============================================
 .ipynb_checkpoints/
 *.ipynb_checkpoints
 
-# =============================================
 # TESTING & COVERAGE
-# =============================================
 .pytest_cache/
 .coverage
 htmlcov/
 .tox/
 
-# =============================================
 # DISTRIBUTION & BUILD
-# =============================================
 build/
 dist/
 *.egg-info/
 *.egg
 
-# =============================================
 # LOGS & TEMPORARY FILES
-# =============================================
 tmp/
 logs/
 cache/
 *.log
 
-# =============================================
 # DATA: RAW (all raw datasets ignored)
-# =============================================
 data/raw/*
 !data/raw/.gitkeep
 
-# =============================================
 # DATA: PROCESSED (all generated files ignored)
-# =============================================
 data/processed/*
 !data/processed/.gitkeep
 
@@ -96,9 +76,7 @@ data/processed/models/
 *.joblib
 *.h5
 
-# =============================================
 # RESULTS: ALL OUTPUTS (figures, curves, reports)
-# =============================================
 results/*
 !results/.gitkeep
 
@@ -114,9 +92,8 @@ results/**/*.csv
 results/**/*.txt
 results/**/*.pdf
 
-# =============================================
+
 # MODEL FILES (anywhere in project)
-# =============================================
 *.pkl
 *.joblib
 *.h5
@@ -124,17 +101,15 @@ results/**/*.pdf
 *.pt
 *.ckpt
 
-# =============================================
+
 # LARGE CSV FILES (anywhere in project)
-# =============================================
 **/tweet_sentiment.csv
 **/merged_sentiment_stock_company.csv
 **/*_features_*.csv
 **/company_stock_data.csv
 
-# =============================================
+
 # EQUITY CURVES & FIGURES (anywhere)
-# =============================================
 **/*_equity*.csv
 **/*_buyhold.csv
 **/*_lr_*.csv
@@ -145,15 +120,14 @@ results/**/*.pdf
 *.jpg
 *.jpeg
 
-# =============================================
+
 # BACKTEST OUTPUTS
-# =============================================
+
 **/backtest_*.txt
 **/*_results*.txt
 
-# =============================================
 # KEEP FOLDER STRUCTURE
-# =============================================
+
 # All .gitkeep files are tracked to preserve empty directories
 !.gitkeep
 !**/.gitkeep

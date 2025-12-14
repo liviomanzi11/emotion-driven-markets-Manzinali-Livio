@@ -1,6 +1,4 @@
 ﻿"""
-figures_company.py
-==================
 Generates visualizations comparing ML + Sentiment strategies across 6 companies.
 
 Creates 9 professional outputs:
@@ -201,7 +199,7 @@ def figure_technical_returns():
     ax.set_title("Technical Features: Total Returns by Model", fontsize=15, fontweight="bold")
     ax.set_xticks(x)
     ax.set_xticklabels(TICKERS, fontsize=12)
-    ax.legend(fontsize=11, ncol=5)
+    ax.legend(fontsize=14, ncol=5)
     ax.axhline(0, color="black", linestyle="--", linewidth=1)
     ax.grid(axis="y", alpha=0.3)
     
@@ -249,7 +247,7 @@ def figure_technical_drawdown():
     ax.set_title("Technical Features: Maximum Drawdown by Model", fontsize=15, fontweight="bold")
     ax.set_xticks(x)
     ax.set_xticklabels(TICKERS, fontsize=12)
-    ax.legend(fontsize=11, ncol=5)
+    ax.legend(fontsize=14, ncol=5)
     ax.axhline(0, color="black", linestyle="--", linewidth=1)
     ax.grid(axis="y", alpha=0.3)
     plt.tight_layout()
@@ -345,7 +343,7 @@ def figure_sentiment_returns():
     ax.set_title("Sentiment Features: Total Returns by Model", fontsize=15, fontweight="bold")
     ax.set_xticks(x)
     ax.set_xticklabels(TICKERS, fontsize=12)
-    ax.legend(fontsize=11, ncol=5)
+    ax.legend(fontsize=14, ncol=5)
     ax.axhline(0, color="black", linestyle="--", linewidth=1)
     ax.grid(axis="y", alpha=0.3)
     
@@ -393,7 +391,7 @@ def figure_sentiment_drawdown():
     ax.set_title("Sentiment Features: Maximum Drawdown by Model", fontsize=15, fontweight="bold")
     ax.set_xticks(x)
     ax.set_xticklabels(TICKERS, fontsize=12)
-    ax.legend(fontsize=11, ncol=5)
+    ax.legend(fontsize=14, ncol=5)
     ax.axhline(0, color="black", linestyle="--", linewidth=1)
     ax.grid(axis="y", alpha=0.3)
     plt.tight_layout()
@@ -490,13 +488,12 @@ def figure_equity_curves():
         try:
             tech_slug = model_code_to_slug(best_tech, "technical")
             sent_slug = model_code_to_slug(best_sent, "sentiment")
-            bh_slug = "buyhold"
             df_eq_tech = None
             df_eq_sent = None
             df_eq_bh = None
             ftech = EQUITY_DIR / f"{ticker}_{tech_slug}.csv"
             fsent = EQUITY_DIR / f"{ticker}_{sent_slug}.csv"
-            fbh = EQUITY_DIR / f"{ticker}_{bh_slug}.csv"
+            fbh = EQUITY_DIR / f"{ticker}_buyhold_na.csv"  # Fixed: buyhold files use _na suffix
             import pandas as _pd
             if ftech.exists():
                 df_eq_tech = _pd.read_csv(ftech, parse_dates=["date"]).sort_values("date")
@@ -521,7 +518,7 @@ def figure_equity_curves():
             ax.set_xticks(ticks)
             ax.set_xticklabels([pd.to_datetime(d).strftime("%Y-%m-%d") for d in ticks], fontsize=9)
             ax.set_ylabel("Equity (base 100)", fontsize=11)
-            ax.legend(fontsize=9)
+            ax.legend(fontsize=13)
             ax.set_title(f"{ticker}", fontsize=13, fontweight="bold")
             ax.grid(axis="y", alpha=0.3)
         else:
@@ -682,7 +679,7 @@ def figure_overall_performance_comparison():
                 fontsize=14, fontweight="bold")
     ax.set_xticks(x)
     ax.set_xticklabels(metrics, fontsize=12)
-    ax.legend(fontsize=12)
+    ax.legend(fontsize=16)
     ax.axhline(0, color="black", linestyle="--", linewidth=1)
     ax.grid(axis="y", alpha=0.3)
     
@@ -741,7 +738,7 @@ def figure_average_equity_comparison():
         sent_slug = model_code_to_slug(best_sent, "sentiment")
         ftech = EQUITY_DIR / f"{ticker}_{tech_slug}.csv"
         fsent = EQUITY_DIR / f"{ticker}_{sent_slug}.csv"
-        fbh = EQUITY_DIR / f"{ticker}_buyhold.csv"
+        fbh = EQUITY_DIR / f"{ticker}_buyhold_na.csv"  # Fixed: buyhold files are saved with _na suffix
         import pandas as _pd
         df_eq_tech = _pd.read_csv(ftech, parse_dates=["date"]).sort_values("date") if ftech.exists() else None
         df_eq_sent = _pd.read_csv(fsent, parse_dates=["date"]).sort_values("date") if fsent.exists() else None
@@ -786,6 +783,11 @@ def figure_average_equity_comparison():
             s2 = s.loc[start:end]
             # If index doesn't align, reindex to a daily date range
             trimmed.append(s2)
+        
+        # Check if we have data to concatenate
+        if len(trimmed) == 0:
+            return pd.Series(dtype=float)  # Return empty series if no data
+        
         # Align by intersection index
         df = pd.concat(trimmed, axis=1, join="inner")
         df.columns = range(df.shape[1])
@@ -794,6 +796,11 @@ def figure_average_equity_comparison():
     mean_tech = mean_series(tech_series, overall_start, overall_end)
     mean_sent = mean_series(sent_series, overall_start, overall_end)
     mean_bh = mean_series(bh_series, overall_start, overall_end)
+
+    # Check if we have enough data to normalize
+    if mean_tech.empty or mean_sent.empty or mean_bh.empty:
+        print("   [WARNING] Insufficient data for average equity comparison; skipping figure.")
+        return
 
     # Normalize to base 100 for visualization
     mean_tech_norm = mean_tech / mean_tech.iloc[0] * 100
@@ -812,7 +819,7 @@ def figure_average_equity_comparison():
     ax.set_xlabel("Date", fontsize=12, fontweight="bold")
     ax.set_ylabel("Index (base 100)", fontsize=12, fontweight="bold")
     ax.set_title("Average Equity: Best Technical vs Best Sentiment vs Buy & Hold (normalized)", fontsize=14, fontweight="bold")
-    ax.legend(fontsize=12)
+    ax.legend(fontsize=16)
     ax.grid(axis="y", alpha=0.3)
     plt.tight_layout()
     plt.savefig(OUT / "avg_equity_comparison.png", dpi=300, bbox_inches="tight")
@@ -843,7 +850,7 @@ def run_figures_company():
     figure_overall_drawdown_comparison()
     figure_technical_vs_sentiment_winners()
     
-    print("\n✓ All figures saved to: results/figures_company/")
+    print("\n[OK] All figures saved to: results/figures_company/")
     print("Outputs generated:")
     print("  Technical   > returns_technical.png, drawdown_technical.png, winners_technical.png")
     print("  Sentiment   > returns_sentiment.png, drawdown_sentiment.png, winners_sentiment.png")
@@ -896,10 +903,11 @@ def figure_overall_drawdown_comparison():
         ax.text(bar.get_x() + bar.get_width()/2., height,
                 f'{val:.1f}%',
                 ha='center', va='top' if height < 0 else 'bottom',
-                fontsize=12, fontweight='bold')
+                fontsize=16, fontweight='bold')
     
     ax.set_ylabel("Mean Max Drawdown (%)", fontsize=13, fontweight="bold")
     ax.set_title("Overall Drawdown Comparison: All Models vs Buy & Hold", fontsize=15, fontweight="bold")
+    ax.tick_params(axis='x', labelsize=14)
     ax.axhline(0, color="black", linestyle="--", linewidth=1)
     ax.grid(axis="y", alpha=0.3)
     

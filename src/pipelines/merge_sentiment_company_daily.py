@@ -38,7 +38,7 @@ def compute_writer_influence(df):
     Writers with consistently high engagement get higher weights,
     preventing one-off viral tweets from skewing sentiment.
     """
-    writer_stats = df.groupby("writer").agg({
+    writer_stats = df.groupby("writer", sort=True).agg({
         "retweet_num": "mean",
         "like_num": "mean",
         "comment_num": "mean"
@@ -73,7 +73,10 @@ def aggregate_sentiment_daily(df):
     
     df["is_extreme"] = (df["polarity"].abs() == 1.0).astype(int)
     
-    daily_agg = df.groupby(["ticker_symbol", "date"]).agg({
+    # Sort before groupby to ensure deterministic aggregation order
+    df = df.sort_values(["ticker_symbol", "date"]).reset_index(drop=True)
+    
+    daily_agg = df.groupby(["ticker_symbol", "date"], sort=True).agg({
         "positive": "mean",
         "neutral": "mean",
         "negative": "mean",
@@ -124,6 +127,10 @@ def load_data():
     # Ensure date columns are parsed correctly
     df_tweets["date"] = pd.to_datetime(df_tweets["date"]).dt.date
     df_stock["date"] = pd.to_datetime(df_stock["date"]).dt.date
+    
+    # Sort immediately after loading to ensure deterministic row ordering
+    df_tweets = df_tweets.sort_values(["ticker_symbol", "date", "tweet_id"]).reset_index(drop=True)
+    df_stock = df_stock.sort_values(["ticker_symbol", "date"]).reset_index(drop=True)
 
     return df_tweets, df_stock
 
@@ -137,6 +144,8 @@ def merge_data(df_sent, df_stock):
         on=["ticker_symbol", "date"],
         how="inner"      # Keep only matching rows
     )
+    # Sort after merge to ensure deterministic row ordering
+    merged = merged.sort_values(["ticker_symbol", "date"]).reset_index(drop=True)
     return merged
 
 

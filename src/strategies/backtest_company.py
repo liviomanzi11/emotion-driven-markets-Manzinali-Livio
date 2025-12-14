@@ -164,7 +164,7 @@ def backtest_logistic_regression(ticker, features_type):
     result = compute_strategy(prob, y_ret, dates)
     save_equity_curve(ticker, "lr", features_type, result)
 
-    print("✓")
+    print("[OK]")
     return result
 
 
@@ -192,7 +192,7 @@ def backtest_random_forest(ticker, features_type):
     result = compute_strategy(prob, y_ret, dates)
     save_equity_curve(ticker, "rf", features_type, result)
 
-    print("✓")
+    print("[OK]")
     return result
 
 
@@ -220,7 +220,7 @@ def backtest_xgboost(ticker, features_type):
     result = compute_strategy(prob, y_ret, dates)
     save_equity_curve(ticker, "xgb", features_type, result)
 
-    print("✓")
+    print("[OK]")
     return result
 
 
@@ -260,7 +260,7 @@ def backtest_lstm(ticker, features_type):
     result = compute_strategy(prob, y_seq, d_seq)
     save_equity_curve(ticker, "lstm", features_type, result)
 
-    print("✓")
+    print("[OK]")
     return result
 
 
@@ -293,7 +293,7 @@ def backtest_buyhold(ticker):
 
     save_equity_curve(ticker, "buyhold", "na", result)
 
-    print("✓")
+    print("[OK]")
     return result
 
 
@@ -340,7 +340,7 @@ def run_backtest():
         print()
 
     save_results(results)
-    print("✓ Backtest complete.\n")
+    print("[OK] Backtest complete.\n")
 
 
 def save_results(results):

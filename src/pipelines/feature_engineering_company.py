@@ -62,9 +62,6 @@ def engineer_features_for_company(df_company, ticker):
     df["date"] = pd.to_datetime(df["date"])
     df = df.sort_values("date").reset_index(drop=True)
     
-    # ============================================
-    # SENTIMENT FEATURES (Enriched)
-    # ============================================
     
     # Keep original FinBERT polarity (already computed in merge step)
     # But also add moving averages of enriched sentiment
@@ -95,9 +92,6 @@ def engineer_features_for_company(df_company, ticker):
     # Safe pct_change: avoid division by zero
     df["engagement_change"] = df["total_engagement"].pct_change().replace([np.inf, -np.inf], 0)
     
-    # ============================================
-    # TECHNICAL FEATURES (Price-based)
-    # ============================================
     
     # Price-based features (use 'adj close' with space, not 'adj_close')
     df["return"] = df["adj close"].pct_change()
@@ -119,10 +113,6 @@ def engineer_features_for_company(df_company, ticker):
     # MACD
     df["macd_line"], df["signal_line"] = compute_macd(df["adj close"])
     
-    # ============================================
-    # TARGET VARIABLE
-    # ============================================
-    
     # Target: stock up/down next day
     df["target"] = (df["adj close"].shift(-1) > df["adj close"]).astype(int)
     
@@ -130,7 +120,8 @@ def engineer_features_for_company(df_company, ticker):
     df = df.dropna(subset=["target"])
     
     # Rolling indicators create NaN for initial periods (e.g., MA20 needs 20 days)
-    df = df.dropna().reset_index(drop=True)
+    # Sort by date BEFORE dropna to ensure deterministic row ordering
+    df = df.sort_values("date").dropna().reset_index(drop=True)
     
     return df
 
@@ -171,9 +162,9 @@ def main():
         train.to_csv(OUT_DIR / f"{ticker}_features_train.csv", index=False)
         test.to_csv(OUT_DIR / f"{ticker}_features_test.csv", index=False)
         
-        print(f"✓ (train: {len(train)}, test: {len(test)})")
+        print(f"[OK] (train: {len(train)}, test: {len(test)})")
     
-    print(f"\n✓ Feature engineering complete. Files saved in {OUT_DIR.name}/\n")
+    print(f"\n[OK] Feature engineering complete. Files saved in {OUT_DIR.name}/\n")
 
 
 if __name__ == "__main__":

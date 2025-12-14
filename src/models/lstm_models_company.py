@@ -10,6 +10,8 @@ import shutil
 # Suppress TensorFlow warnings BEFORE importing
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+os.environ['TF_DETERMINISTIC_OPS'] = '1'  # Force deterministic GPU operations
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'  # Disable GPU, use CPU only (100% deterministic)
 
 from sklearn.preprocessing import StandardScaler
 from sklearn.utils.class_weight import compute_class_weight
@@ -28,12 +30,20 @@ logging.getLogger('tensorflow').setLevel(logging.ERROR)
 tf.get_logger().setLevel('ERROR')
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-# Random seed for reproducibility
+# Random seed for reproducibility - CRITICAL FOR GRADING
 SEED = 42
 os.environ['PYTHONHASHSEED'] = str(SEED)
 np.random.seed(SEED)
+import random
+random.seed(SEED)
 tf.random.set_seed(SEED)
 tf.config.experimental.enable_op_determinism()
+
+# Force single-threaded CPU execution for 100% deterministic results
+# GPU operations have non-deterministic floating-point atomics, so we disable GPU
+# This ensures identical results across runs (required for academic grading)
+tf.config.threading.set_intra_op_parallelism_threads(1)
+tf.config.threading.set_inter_op_parallelism_threads(1)
 
 # Project paths
 BASE = Path(__file__).resolve().parents[2]
@@ -66,8 +76,12 @@ def clear_python_cache():
 
 
 def load_dataset(path):
-    """Load CSV dataset."""
-    return pd.read_csv(path)
+    """Load CSV dataset with deterministic row order."""
+    df = pd.read_csv(path)
+    # CRITICAL: Ensure deterministic row order - date must be sorted ascending
+    if 'date' in df.columns:
+        df = df.sort_values('date').reset_index(drop=True)
+    return df
 
 
 def clean_df(df, features_type):
@@ -108,9 +122,10 @@ def clean_df(df, features_type):
     available_features = [f for f in features if f in df.columns]
     df = df[available_features + ["target"]]
     
-    # Replace Inf before dropna to ensure consistent null handling across datasets
+    # CRITICAL: Replace Inf and NaN, then SORT to ensure deterministic row order
     df = df.replace([np.inf, -np.inf], np.nan)
     df = df.dropna()
+    df = df.sort_index().reset_index(drop=True)  # Maintain temporal order after dropna
     
     return df
 
@@ -232,7 +247,7 @@ def train_lstm(ticker, features_type):
     es = EarlyStopping(patience=10, restore_best_weights=True, verbose=0, monitor='loss')
     progress = ProgressCallback()
 
-    # Train model with balanced epochs for speed
+    # Train model with original hyperparameters for maximum quality
     model.fit(
         X, y,
         epochs=50,
@@ -250,7 +265,7 @@ def train_lstm(ticker, features_type):
     joblib.dump(scaler, ticker_dir / f"lstm_scaler_{features_type}.pkl")
     model.save(ticker_dir / f"lstm_model_{features_type}.h5")
 
-    print("✓")
+    print("[OK]")
 
 
 def test_lstm(ticker, features_type):
@@ -277,9 +292,11 @@ def test_lstm(ticker, features_type):
     preds = (preds > 0.5).astype(int).flatten()
 
     # Calculate metrics
-    from sklearn.metrics import accuracy_score, f1_score
+    from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
     acc = accuracy_score(y, preds)
     f1 = f1_score(y, preds, zero_division=0)
+    precision = precision_score(y, preds, zero_division=0)
+    recall = recall_score(y, preds, zero_division=0)
 
     # Save results
     results_dir = RESULTS_LSTM / ticker
@@ -289,10 +306,12 @@ def test_lstm(ticker, features_type):
     
     with open(out_file, "w") as f:
         f.write(f"=== {ticker} - LSTM ({features_type}) ===\n\n")
-        f.write(f"Accuracy: {acc:.4f}\n")
-        f.write(f"F1-score: {f1:.4f}\n")
+        f.write(f"Accuracy:  {acc:.4f}\n")
+        f.write(f"Precision: {precision:.4f}\n")
+        f.write(f"Recall:    {recall:.4f}\n")
+        f.write(f"F1-score:  {f1:.4f}\n")
 
-    print("✓")
+    print("[OK]")
 
 
 def run_all():
@@ -301,8 +320,8 @@ def run_all():
     Train and test on technical and sentiment features only.
     """
     print("\n=== Running LSTM Pipeline (Company) ===")
-    print("⚠️  Training with enhanced architecture (128→64 neurons, 50 epochs)")
-    print("⚠️  Estimated time: 20-30 minutes for all companies\n")
+    print("[WARNING] Training with enhanced architecture (128->64 neurons, 50 epochs)")
+    print("[WARNING] Estimated time: 20-30 minutes for all companies\n")
 
     for ticker in TICKERS:
         print(f"→ {ticker}")
@@ -315,7 +334,7 @@ def run_all():
         test_lstm(ticker, "technical")
         test_lstm(ticker, "sentiment")
 
-    print(f"\n✓ LSTM pipeline complete.\n")
+    print(f"\n[OK] LSTM pipeline complete.\n")
 
 
 if __name__ == "__main__":

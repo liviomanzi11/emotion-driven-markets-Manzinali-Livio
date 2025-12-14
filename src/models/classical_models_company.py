@@ -3,19 +3,23 @@ import numpy as np
 from pathlib import Path
 import joblib
 import shutil
+import os
+import random
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
 from sklearn.utils.class_weight import compute_class_weight
-from sklearn.metrics import accuracy_score, f1_score, confusion_matrix
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, confusion_matrix
 import warnings
 from sklearn.exceptions import ConvergenceWarning
 warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
-# Fix random seed for reproducibility
+# ===== CRITICAL: Fix ALL random seeds for 100% reproducibility =====
 SEED = 42
+os.environ['PYTHONHASHSEED'] = str(SEED)
+random.seed(SEED)
 np.random.seed(SEED)
 
 # Project root directory
@@ -51,8 +55,12 @@ TICKERS = ["AAPL", "GOOG", "GOOGL", "AMZN", "TSLA", "MSFT"]
 
 
 def load_dataset(path):
-    """Load CSV dataset from the specified path."""
-    return pd.read_csv(path)
+    """Load CSV dataset with deterministic row order."""
+    df = pd.read_csv(path)
+    # CRITICAL: Ensure deterministic row order
+    if 'date' in df.columns:
+        df = df.sort_values('date').reset_index(drop=True)
+    return df
 
 
 def prepare_features(df, features_type):
@@ -136,27 +144,36 @@ def train_models(ticker, features_type):
     log_reg = LogisticRegression(
         max_iter=1000,
         class_weight=class_weight_dict,
-        random_state=42,
+        random_state=SEED,
         solver="lbfgs"
     )
     log_reg.fit(X_train_scaled, y_train)
 
     # Train Random Forest (on UNSCALED data - tree models don't need scaling)
+    # CRITICAL for 100% determinism: n_jobs=1 forces single-thread execution
     rf = RandomForestClassifier(
         n_estimators=100,
         class_weight=class_weight_dict,
-        random_state=42,
-        n_jobs=-1
+        random_state=SEED,
+        n_jobs=1,  # MUST be 1 - parallel threads have non-deterministic order
+        max_features='sqrt',
+        bootstrap=True,
+        max_samples=None  # No subsampling (use all rows)
     )
     rf.fit(X_train, y_train)
 
     # Train XGBoost (on UNSCALED data)
+    # CRITICAL: tree_method='exact' uses deterministic greedy algorithm
     scale_pos_weight = class_weights[1] / class_weights[0]
     xgb = XGBClassifier(
         n_estimators=100,
         scale_pos_weight=scale_pos_weight,
-        random_state=42,
-        eval_metric="logloss"
+        random_state=SEED,
+        eval_metric="logloss",
+        nthread=1,  # Single-threaded for reproducibility
+        subsample=1.0,  # No row sampling for determinism
+        colsample_bytree=1.0,  # No column sampling for determinism
+        tree_method='exact'  # Exact greedy algorithm (100% deterministic)
     )
     xgb.fit(X_train, y_train)
 
@@ -191,6 +208,7 @@ def test_models(ticker, features_type):
     # Trained models must be loaded from disk for out-of-sample evaluation
     model_dir = CLASSICAL_MODELS_COMPANY / ticker
     log_reg = joblib.load(model_dir / f"{features_type}_logistic_regression_model.pkl")
+    scaler = joblib.load(model_dir / f"{features_type}_scaler.pkl")  # Load scaler for LR
     rf = joblib.load(model_dir / f"{features_type}_random_forest_model.pkl")
     xgb = joblib.load(model_dir / f"{features_type}_xgboost_model.pkl")
 
@@ -198,14 +216,24 @@ def test_models(ticker, features_type):
     results = []
     
     for name, model in [("Logistic Regression", log_reg), ("Random Forest", rf), ("XGBoost", xgb)]:
-        preds = model.predict(X_test)
+        # CRITICAL: LR was trained on scaled data, must scale test data the same way
+        if name == "Logistic Regression":
+            X_model = scaler.transform(X_test)
+        else:
+            X_model = X_test
+        
+        preds = model.predict(X_model)
         acc = accuracy_score(y_test, preds)
         f1 = f1_score(y_test, preds, zero_division=0)
+        precision = precision_score(y_test, preds, zero_division=0)
+        recall = recall_score(y_test, preds, zero_division=0)
         cm = confusion_matrix(y_test, preds)
         
         results.append({
             "model": name,
             "accuracy": acc,
+            "precision": precision,
+            "recall": recall,
             "f1": f1,
             "confusion_matrix": cm
         })
@@ -220,8 +248,10 @@ def test_models(ticker, features_type):
         f.write(f"=== {ticker} - Classical Models ({features_type}) ===\n\n")
         for res in results:
             f.write(f"{res['model']}:\n")
-            f.write(f"  Accuracy: {res['accuracy']:.4f}\n")
-            f.write(f"  F1-score: {res['f1']:.4f}\n")
+            f.write(f"  Accuracy:  {res['accuracy']:.4f}\n")
+            f.write(f"  Precision: {res['precision']:.4f}\n")
+            f.write(f"  Recall:    {res['recall']:.4f}\n")
+            f.write(f"  F1-score:  {res['f1']:.4f}\n")
             f.write(f"  Confusion Matrix:\n{res['confusion_matrix']}\n\n")
 
 
@@ -241,22 +271,22 @@ def run_all():
         # Train models
         print(f"  Training (technical)...", end=" ", flush=True)
         train_models(ticker, "technical")
-        print("✓")
+        print("[OK]")
         
         print(f"  Training (sentiment)...", end=" ", flush=True)
         train_models(ticker, "sentiment")
-        print("✓")
+        print("[OK]")
         
         # Test models
         print(f"  Testing (technical)...", end=" ", flush=True)
         test_models(ticker, "technical")
-        print("✓")
+        print("[OK]")
         
         print(f"  Testing (sentiment)...", end=" ", flush=True)
         test_models(ticker, "sentiment")
-        print("✓")
+        print("[OK]")
     
-    print(f"\n✓ Classical models pipeline complete.\n")
+    print(f"\n[OK] Classical models pipeline complete.\n")
 
 
 if __name__ == "__main__":
