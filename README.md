@@ -7,140 +7,192 @@
 
 ## Abstract
 
-This project investigates whether **Twitter sentiment** can enhance the **prediction of short-term movements** in the **NASDAQ Composite Index**.  By combining **Natural Language Processing (NLP)** with **machine learning**, it explores whether the tone of online discussions about major NASDAQ-listed companies — such as Apple, Tesla, and Amazon — provides useful signals for forecasting daily market direction.  
+This project investigates whether **Twitter sentiment** can enhance the **prediction of short-term stock returns** for 6 major NASDAQ companies (AAPL, GOOG, GOOGL, AMZN, TSLA, MSFT). By combining **Natural Language Processing (NLP)** with **machine learning**, it compares the predictive power of **technical indicators** versus **sentiment features** using multiple models (Logistic Regression, Random Forest, XGBoost, LSTM) evaluated through backtesting strategies.
 
-Using the **FinBERT** transformer model for financial sentiment extraction and merging these results with historical market data from **Yahoo Finance**, this project integrates behavioral finance concepts into a predictive data science framework.
+Using the **FinBERT** transformer model for financial sentiment extraction and merging these results with historical market data from **Yahoo Finance**, this project isolates sentiment to measure its predictive contribution against pure technical analysis within a behavioral finance framework.
 
 ## 1. Context and Motivation
 
 The behavior of financial markets is increasingly influenced by collective sentiment expressed online. Platforms like **Twitter** serve as real-time barometers of investor mood, where reactions to corporate news, political announcements, or macroeconomic trends can spread instantly.  
 
-This project applies principles of **behavioral finance** and **machine learning** to examine whether aggregated sentiment from Twitter can improve the predictive modeling of short-term changes in the NASDAQ index. Rather than describing correlations, it aims to evaluate the **predictive contribution** of sentiment compared to traditional market indicators.
+This project applies principles of **behavioral finance** and **machine learning** to examine whether aggregated sentiment from Twitter can improve the predictive modeling of short-term stock returns for individual companies. Rather than describing correlations, it aims to evaluate the **predictive contribution** of sentiment compared to traditional market indicators through rigorous backtesting.
 
 ## 2. Research Objective
 
-The main goal is to determine whether **social media sentiment** provides **additional predictive power** when forecasting daily NASDAQ movements.  
+The main goal is to determine whether **social media sentiment** provides **predictive power** when forecasting daily stock returns for 6 NASDAQ companies.
 
-Specifically, the project compares two modeling approaches:
-- A **baseline model** using only technical indicators (returns, moving averages, volatility).  
-- A **hybrid model** that integrates both technical and sentiment-based features.
+Specifically, the project compares multiple modeling approaches:
+- **Technical-only models:** Logistic Regression, Random Forest, XGBoost, LSTM trained exclusively on technical indicators
+- **Sentiment-only models:** Logistic Regression, Random Forest, XGBoost, LSTM trained exclusively on sentiment features
+- **Buy & Hold baseline** for benchmark comparison
 
-Machine learning models such as **Logistic Regression**, **Random Forest**, and **XGBoost** will be trained and evaluated on historical data to test this hypothesis.
+All models are evaluated through backtesting with realistic equity curves and performance metrics (Total Return, Sharpe Ratio, Maximum Drawdown).
 
 ## 3. Methodology Overview
 
-The project follows a reproducible workflow combining NLP, financial feature engineering, and supervised learning.
+The project follows a reproducible workflow combining NLP, financial feature engineering, supervised learning, and strategy backtesting.
 
 1. **Data Collection & Preparation**  
-   Historical NASDAQ data (2015–2020) retrieved via `yfinance`.  
-   Financial tweets from **Kaggle datasets** related to major NASDAQ-listed companies (see section 7).  
-   Merging tweet timestamps with daily market data.
-   
+   Historical stock data (2015–2019) for 6 companies retrieved via `yfinance`.  
+   Financial tweets from **Kaggle datasets** related to each company.  
+   Merging tweet timestamps with daily stock data by company and date.
 
-3. **Sentiment Analysis**  
+2. **Sentiment Analysis**  
    Application of **FinBERT** to classify tweets as positive, neutral, or negative.  
-   Daily aggregation of sentiment metrics (average score, sentiment proportions and polarity level).  
+   Daily aggregation of sentiment metrics per company (polarity, weighted sentiment, tweet volume, engagement).
 
-4. **Feature Engineering & Modeling**  
-   Merge sentiment and market indicators into a unified dataset.  
-   Train **Logistic Regression**, **Random Forest**, and **XGBoost** to predict next-day market direction.  
-   Compare predictive performance with and without sentiment features.
+3. **Feature Engineering**  
+   Creation of **15 technical features** (returns, MA, volatility, RSI, MACD) per company.  
+   Creation of **15 sentiment features** (polarity, impact-weighted scores, deltas, volatility).  
+   Train/test split with temporal validation (2015-2018 train, 2019 test).
 
-5. **Evaluation & Interpretation**  
-   Temporal validation (training 2015–2018, testing 2019–2020).  
-   Performance measured using classification accuracy and feature importance analysis.  
-   Visualization of sentiment versus market movements.
+4. **Model Training**  
+   Train **8 models per company:** 4 technical-only models + 4 sentiment-only models.  
+   Models: Logistic Regression, Random Forest, XGBoost, LSTM.  
+   Each classical model trained with balanced class weights and StandardScaler (LR only).  
+   LSTM uses 45-day sequences with bidirectional architecture.  
+
+5. **Backtesting & Evaluation**  
+   Long-only strategy: invest when model predicts probability > 0.5, else cash.  
+   Metrics: Total Return, Sharpe Ratio, Maximum Drawdown.  
+   Generate daily equity curves for visualization and comparison.
 
 ## 4. Repository Structure
 
 ```text
 emotion-driven-markets/
 │
-├── data/
-│   ├── raw/                # Kaggle datasets (not tracked by Git)
-│   │   ├── Company.csv
-│   │   ├── Company_Tweet.csv
-│   │   ├── Tweet.csv
-│   │   └── .gitkeep
-│   ├── processed/          # Outputs generated by pipelines
-│   │   ├── market_data.csv
-│   │   └── (other generated files)
-│
-├── notebooks/
-│   └── sentiment_pipeline.ipynb
-│
-├── src/
-│   ├── sentiment_pipeline.py      # FinBERT sentiment workflow
-│   └── yahoo_finance_market_data.py   # Market data collector
-│
-├── tests/
-│   └── .gitkeep
-│
+├── main.py                 # Main entry point - Run this!
+├── environment.yml         # Conda environment dependencies
+├── AI_USAGE.md             # AI tools usage documentation
 ├── PROPOSAL.md
 ├── README.md
-├── requirements.txt
-└── LICENSE
+├── LICENSE
+│
+├── data/
+│   ├── raw/                # Raw datasets (place CSV files here)
+│   │   ├── Company.csv
+│   │   ├── Company_Tweet.csv
+│   │   └── Tweet.csv
+│   └── processed/          # Auto-generated outputs
+│       ├── company_stock_data.csv
+│       ├── tweet_sentiment.csv
+│       ├── merged_sentiment_stock_company.csv
+│       ├── features_company/     # Feature-engineered datasets by ticker
+│       ├── models/
+│       │   ├── classical_company/  # Trained classical models by ticker
+│       │   └── lstm_company/       # Trained LSTM models by ticker
+│       └── samples/              # Sample outputs for testing
+│
+├── src/
+│   ├── pipelines/
+│   │   ├── yahoo_finance_company_data.py
+│   │   ├── sentiment_pipeline_company.py
+│   │   ├── merge_sentiment_company_daily.py
+│   │   └── feature_engineering_company.py
+│   ├── models/
+│   │   ├── classical_models_company.py
+│   │   └── lstm_models_company.py
+│   ├── strategies/
+│   │   └── backtest_company.py
+│   └── visualization/
+│       └── figures_company.py
+│
+├── results/
+│   ├── classical_company/       # Classical model classification reports by ticker
+│   ├── lstm_company/            # LSTM training history by ticker
+│   ├── equity_curves/           # Daily equity curve CSV files (all strategies)
+│   └── figures_company/         # Visualization outputs
+│       └── strategy/            # Backtest comparison charts and results
+│
+└── tests/
+    └── 
 ```
 
 ## 5. Installation and Data Setup
 
-### **5.1 Install Requirements**
+### **5.1 Clone Repository**
 ```bash
 git clone https://github.com/liviomanzi11/emotion-driven-markets-Manzinali-Livio.git
 cd emotion-driven-markets-Manzinali-Livio
-pip install -r requirements.txt
 ```
-## 5.2 Download Required Datasets (Kaggle)
-### **Tweets about NASDAQ companies (2015–2020)**  
-Download from Kaggle:  
-https://www.kaggle.com/datasets/omermetinn/tweets-about-the-top-companies-from-2015-to-2020
 
-Required files:
-- `Tweet.csv`
-- `Company_Tweet.csv`
-- `Company.csv`
-## 5.3 Place the files in the correct folders
+### **5.2 Create Conda Environment**
+```bash
+conda env create -f environment.yml
+conda activate emotion-driven-markets
+```
 
-After downloading, place them **exactly here**:
+**Note:** The environment includes all required packages:
+- Python 3.11
+- pandas, numpy, scikit-learn, xgboost
+- tensorflow, pytorch, transformers
+- yfinance, matplotlib, seaborn
+- tqdm, joblib
+## 5.2 Download Required Datasets
+
+**Google Drive (RECOMMENDED):**  
+https://drive.google.com/drive/folders/1MfgTLtyA0fM9Xrliyw2eE4cFIff44bkD?usp=sharing
+
+**Required downloads:**
+
+1. **Raw data** → place in `data/raw/`:
+   - `Tweet.csv`
+   - `Company_Tweet.csv`
+   - `Company.csv`
+   
+   **Alternative:** Raw data can also be downloaded from Kaggle:  
+   https://www.kaggle.com/datasets/omermetinn/tweets-about-the-top-companies-from-2015-to-2020
+
+2. **Preprocessed sentiment** (MANDATORY) → place in `data/processed/`:
+   - `tweet_sentiment.csv` (FinBERT sentiment scores for all tweets)
+
+**Why is `tweet_sentiment.csv` required?**  
+Running FinBERT sentiment analysis on all tweets takes **5-6 hours**. The preprocessed file is provided to save time. Download it from Google Drive and place it in `data/processed/`.
+
+## 5.3 File Placement
+
+After downloading from Google Drive, your structure must be:
 
 ```
 emotion-driven-markets/
 ├── data/
-│   └── raw/
-│       ├── Tweet.csv
-│       ├── Company_Tweet.csv
-│       ├── Company.csv
+│   ├── raw/
+│   │   ├── Tweet.csv
+│   │   ├── Company_Tweet.csv
+│   │   └── Company.csv
+│   └── processed/
+│       └── tweet_sentiment.csv  # MANDATORY download from Drive
 ```
 
-## 5.4 Running the Project
+All other files in `data/processed/` are **automatically generated** when you run the pipeline.
 
-### **Step 1 — Download market data**
+## 5.4 Run the Complete Pipeline
+
 ```bash
-python src/yahoo_finance_market_data.py
+python main.py
 ```
 
-### **Step 2 — Run sentiment extraction**
-```bash
-python src/sentiment_pipeline.py
-```
+This executes all steps automatically:
+1. Load preprocessed sentiment data from `data/processed/tweet_sentiment.csv`
+2. Merge sentiment + stock data by company 
+3. Feature engineering (15 technical + 15 sentiment features per company)
+4. Train classical models (LR, RF, XGB) - separately for technical and sentiment
+5. Train LSTM models - separately for technical and sentiment
+6. Backtest all strategies (9 strategies × 6 companies = 54 backtests)
+7. Generate visualization charts and equity curves
 
-Outputs appear automatically in:
+**Expected Runtime:** ~10-15 minutes (with preprocessed `tweet_sentiment.csv`)
 
-```
-/data/processed/
-```
+## 5.5 Reproducibility
 
-Generated files include:
+All random processes use fixed seeds to ensure reproducible results:
+- Train/test temporal split (2015-2018 train, 2019 test)
+- Model initialization (`random_state=42` for LR, RF, XGB; `seed=42` for LSTM)
+- Feature ordering enforced via `feature_order.pkl` files
+- LSTM sequence creation with consistent scaling
 
-| File | Description |
-|------|-------------|
-| `tweet_sentiment.csv` | FinBERT scores per tweet |
-| `tweet_sentiment_labeled.csv` | Sentiment labels & polarity |
-| `company_sentiment_daily.csv` | Sentiment aggregated by ticker/date |
-| `global_sentiment_daily.csv` | Global daily sentiment |
-| `tweet_sentiment_train_2015_2018.csv` | Training dataset |
-| `tweet_sentiment_test_2019_2020.csv` | Test dataset |
-| `market_data.csv` | Yahoo Finance OHLCV data |
+Running `python main.py` twice will produce identical models and backtest results.
 
 ## 6. References
 
