@@ -66,6 +66,7 @@ def ensure_folder_structure():
 
     # Results organized by model type to separate classification reports from backtests
     (BASE / "results").mkdir(parents=True, exist_ok=True)
+    
     (BASE / "results" / "classical_company").mkdir(parents=True, exist_ok=True)
     (BASE / "results" / "lstm_company").mkdir(parents=True, exist_ok=True)
     (BASE / "results" / "equity_curves").mkdir(parents=True, exist_ok=True)
@@ -73,7 +74,6 @@ def ensure_folder_structure():
     (BASE / "results" / "figures_company" / "strategy").mkdir(parents=True, exist_ok=True)
 
     print("[OK] Folder structure verified.\n")
-
 
 def print_summary():
     """
@@ -129,13 +129,12 @@ def show_menu():
     print("  [8] Generate visualizations")
     print("="*60)
     print("\nExecution modes:")
-    print("  [1] Run full pipeline (all 8 steps)")
-    print("  [2] Run step-by-step (interactive)")
-    print("  [3] Run specific steps (select multiple)")
+    print("  [1] Run full pipeline (all 8 steps automatically)")
+    print("  [2] Run step-by-step (press ENTER for each step)")
     print("  [0] Exit")
     print("="*60)
     
-    choice = input("\nEnter your choice [0-3]: ").strip()
+    choice = input("\nEnter your choice [0-2]: ").strip()
     return choice
 
 
@@ -417,13 +416,8 @@ def main():
                 run_interactive()
                 break
             
-            elif choice == '3':
-                # Selective steps
-                run_selective()
-                break
-            
             else:
-                print("\n[ERROR] Invalid choice. Please enter 0, 1, 2, or 3.\n")
+                print("\n[ERROR] Invalid choice. Please enter 0, 1, or 2.\n")
     
     except KeyboardInterrupt:
         print("\n\n[!] Pipeline interrupted by user (Ctrl+C)\n")
