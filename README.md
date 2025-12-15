@@ -106,7 +106,6 @@
    │       └── strategy/            # Backtest comparison charts and results
    │
    └── tests/
-      └── 
    ```
 
    ## 5. Installation and Data Setup
@@ -129,7 +128,8 @@
    - tensorflow, pytorch, transformers
    - yfinance, matplotlib, seaborn
    - tqdm, joblib
-   ## 5.2 Download Required Datasets
+
+   ## 5.3 Download Required Datasets
 
    **Google Drive (RECOMMENDED):**  
    https://drive.google.com/drive/folders/1MfgTLtyA0fM9Xrliyw2eE4cFIff44bkD?usp=sharing
@@ -163,9 +163,9 @@
 
    **Note:** If `company_stock_data.csv` is missing, the pipeline will automatically download from Yahoo Finance with 2-decimal rounding as a fallback. However, for perfect reproducibility (required), use the provided file.
 
-   ## 5.3 File Placement
+   ## 5.4 File Placement
 
-   After downloading from Google Drive, your structure must be:
+   After downloading from Google Drive, your data structure must be:
 
    ```
    emotion-driven-markets/
@@ -181,7 +181,7 @@
 
    All other files in `data/processed/` and all other folders are **automatically generated** when you run the pipeline.
 
-   ## 5.4 Run the Complete Pipeline
+   ## 5.5 Run the Complete Pipeline
 
    ```bash
    python main.py
@@ -199,7 +199,7 @@
 
    **Expected Runtime:** ~25-30 minutes (with preprocessed `tweet_sentiment.csv` and `company_stock_data.csv`)
 
-   ## 5.5 Reproducibility
+   ## 5.6 Reproducibility
 
    All random processes use fixed seeds to ensure reproducible results:
    - **Yahoo Finance data:** Cached file (`company_stock_data.csv`) ensures identical stock data across runs
