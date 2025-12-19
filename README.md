@@ -63,7 +63,8 @@
    emotion-driven-markets/
    │
    ├── main.py                 # Main entry point - Run this!
-   ├── environment.yml         # Conda environment dependencies
+   ├── requirements.txt        # Python dependencies (pip)
+   ├── environment.yml         # Conda environment (alternative)
    ├── AI_USAGE.md             # AI tools usage documentation
    ├── PROPOSAL.md
    ├── README.md
@@ -116,18 +117,29 @@
    cd emotion-driven-markets-Manzinali-Livio
    ```
 
-   ### **5.2 Create Conda Environment**
+   ### **5.2 Install Dependencies**
+
+   **Option A: Using pip (Recommended)**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate     # macOS/Linux
+   # venv\Scripts\activate      # Windows
+   
+   pip install -r requirements.txt
+   ```
+
+   **Option B: Using Conda**
    ```bash
    conda env create -f environment.yml
    conda activate emotion-driven-markets
    ```
 
-   **Note:** The environment includes all required packages:
-   - Python 3.11
-   - pandas, numpy, scikit-learn, xgboost
-   - tensorflow, pytorch, transformers
-   - yfinance, matplotlib, seaborn
-   - tqdm, joblib
+   **Note:** Both options install the same packages:
+   - Python 3.11.5
+   - pandas 2.1.1, numpy 1.26.0, scikit-learn 1.3.1, xgboost 2.0.0
+   - tensorflow 2.13.0, torch 2.0.1, transformers 4.33.2
+   - yfinance 0.2.28, matplotlib 3.8.0, seaborn 0.13.0
+   - tqdm 4.66.1, joblib 1.3.2, pytest 7.4.2
 
    ## 5.3 Download Required Datasets
 

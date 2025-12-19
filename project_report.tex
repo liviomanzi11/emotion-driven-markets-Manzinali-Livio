@@ -217,7 +217,7 @@
 
     \textbf{Hardware:} Model training and backtesting performed on Windows 11 Pro laptop (Intel Core i5-11300H, 32 GB RAM, GeForce RTX 4060). FinBERT sentiment classification (4M tweets, 5-6 hours) executed on ASUS ZenBook Pro Duo (Intel Core i9-13th Gen, 32 GB RAM, GeForce RTX 4060) with GPU acceleration.
 
-    \vspace{1mm}\textbf{Software:} Python 3.11.5, pandas 2.1.1, numpy 1.26.0, scikit-learn 1.3.1, XGBoost 2.0.0, TensorFlow 2.13.0, transformers 4.33.2, yfinance 0.2.28, matplotlib 3.8.0, seaborn 0.13.0 (pinned in \texttt{environment.yml}).
+    \vspace{1mm}\textbf{Software:} Python 3.11.5, pandas 2.1.1, numpy 1.26.0, scikit-learn 1.3.1, XGBoost 2.0.0, TensorFlow 2.13.0, transformers 4.33.2, yfinance 0.2.28, matplotlib 3.8.0, seaborn 0.13.0 (pinned in \texttt{requirements.txt} and \texttt{environment.yml}).
 
     \vspace{1mm}\textbf{Hyperparameters:}
     \begin{itemize}[noitemsep,topsep=1pt,leftmargin=*]
@@ -521,26 +521,27 @@ MSFT & -0.67 & -4.44 & -0.37 & 1.97 & 0.81 & \textbf{2.80} & 0.23 & 1.06 \\
 \label{fig:performance_metrics}
 \end{figure}
 
-\vspace{0.3cm}
+\vspace{-0.3cm}
 
    \section{Code Repository}
 \label{app:code}
-
+\vspace{-0.3cm}
 \noindent
 \textbf{GitHub Repository:} \url{https://github.com/liviomanzi11/emotion-driven-markets-Manzinali-Livio}
 
-\vspace{0.1cm}
+\vspace{-0.4cm}
 
 \subsection*{Repository Structure}
-
+\vspace{-0.2cm}
 \noindent The project follows a modular Python architecture:
-\vspace{0.1cm}
+\vspace{-0.2cm}
 
 {\small 
 \begin{verbatim}
 emotional-driven-markets/
 ├── main.py               # Main entry point
-├── environment.yml       # Conda dependencies
+├── requirements.txt      # Python dependencies (pip)
+├── environment.yml       # Conda dependencies (alternative)
 ├── data/
 │   ├── raw/              # Kaggle datasets (CSV)
 │   └── processed/        # Generated features & models
@@ -553,22 +554,27 @@ emotional-driven-markets/
 └── tests/                # Unit tests (57 tests)
 \end{verbatim}}
 
-\vspace{0.1cm}
+\vspace{-0.7cm}
 
 \subsection*{Installation \& Reproduction}
-
+\vspace{-0.1cm}
 \noindent\textbf{1. Clone \& Setup:}
-\vspace{0.1cm}
+\vspace{-0.2cm}
 {\small
 \begin{verbatim}
 git clone https://github.com/liviomanzi11/
   emotion-driven-markets-Manzinali-Livio.git
 cd emotion-driven-markets-Manzinali-Livio
-conda env create -f environment.yml
-conda activate emotion-driven-markets
+
+# Option A: Using pip (recommended)               # Option B: Using conda
+python -m venv venv                               conda env create -f environment.yml
+source venv/bin/activate     # macOS/Linux        conda activate emotion-driven-markets
+# venv\Scripts\activate      # Windows
+pip install -r requirements.txt
+
 \end{verbatim}}
 
-\vspace{0.1cm}
+\vspace{-0.3cm}
 
 \noindent\textbf{2. Download data from Google Drive:}
 \vspace{0.1cm}
@@ -578,7 +584,6 @@ conda activate emotion-driven-markets
 \item Preprocessed: \texttt{tweet\_sentiment.csv}, \texttt{company\_stock\_data.csv} $\rightarrow$ \texttt{data/processed/}
 \end{itemize}}
 
-\vspace{0.1cm}
 
 \noindent\textbf{3. Run pipeline:}
 \vspace{0.1cm}
