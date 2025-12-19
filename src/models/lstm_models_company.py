@@ -30,7 +30,7 @@ logging.getLogger('tensorflow').setLevel(logging.ERROR)
 tf.get_logger().setLevel('ERROR')
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-# Random seed for reproducibility - CRITICAL FOR GRADING
+# Random seed for reproducibility - ensures deterministic results
 SEED = 42
 os.environ['PYTHONHASHSEED'] = str(SEED)
 np.random.seed(SEED)
@@ -41,7 +41,7 @@ tf.config.experimental.enable_op_determinism()
 
 # Force single-threaded CPU execution for 100% deterministic results
 # GPU operations have non-deterministic floating-point atomics, so we disable GPU
-# This ensures identical results across runs (required for academic grading)
+# This ensures identical results across runs (required for reproducibility)
 tf.config.threading.set_intra_op_parallelism_threads(1)
 tf.config.threading.set_inter_op_parallelism_threads(1)
 

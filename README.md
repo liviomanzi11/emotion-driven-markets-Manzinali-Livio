@@ -55,7 +55,7 @@
    5. **Backtesting & Evaluation**  
       Long-only strategy: invest when model predicts probability > 0.5, else cash.  
       Metrics: Total Return, Sharpe Ratio, Maximum Drawdown.  
-      Generate daily equity curves for visualization and comparison.
+      Generate daily equity curves and charts for visualization and comparison.
 
    ## 4. Repository Structure
 
@@ -171,9 +171,9 @@
       - `company_stock_data.csv` (Historical OHLCV data for 6 companies: AAPL, GOOG, GOOGL, AMZN, TSLA, MSFT)
 
    **Why is `company_stock_data.csv` required?**  
-   Yahoo Finance API can return micro-variations in precision on each download, breaking reproducibility. The preprocessed file uses the exact data from the original analysis, ensuring **100% identical results** when grading. Download it from Google Drive and place it in `data/processed/`.
+   Yahoo Finance API can return micro-variations in precision on each download, breaking reproducibility. The preprocessed file uses the exact data from the original analysis, ensuring **100% identical results**. Download it from Google Drive and place it in `data/processed/`.
 
-   **Note:** If `company_stock_data.csv` is missing, the pipeline will automatically download from Yahoo Finance with 2-decimal rounding as a fallback. However, for perfect reproducibility (required), use the provided file.
+   **Note:** If `company_stock_data.csv` is missing, the pipeline will automatically download from Yahoo Finance with 2-decimal rounding as a fallback. However, for perfect reproducibility, use the provided file.
 
    ## 5.4 File Placement
 
@@ -199,7 +199,11 @@
    python main.py
    ```
 
-   This executes all steps automatically:
+   The interactive menu offers two execution modes:
+   - **[1] Full pipeline execution:** Run all 8 steps automatically without interruption
+   - **[2] Step-by-step execution:** Press ENTER to proceed to each next step, 's' to skip a step, or 'q' to quit
+
+   When running the full pipeline (option 1), it executes all steps automatically:
    1. Load preprocessed sentiment data from `data/processed/tweet_sentiment.csv`
    2. Load stock data from `data/processed/company_stock_data.csv` (or download from Yahoo if missing)
    3. Merge sentiment + stock data by company 

@@ -76,7 +76,7 @@ def main():
     REPRODUCIBILITY STRATEGY:
     1. First run: Downloads with FULL PRECISION (no rounding)
        → Save this file to Google Drive
-       → Share with professor for 100% reproducible grading
+       → Ensures 100% reproducible results across different environments
     
     2. Subsequent runs: 
        - If file exists → Use cached version (100% reproducible)
