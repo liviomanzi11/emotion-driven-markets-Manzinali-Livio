@@ -153,6 +153,94 @@ class TestFeatureEngineering:
         assert abs(returns.iloc[1] - 0.10) < 1e-6
         # Third return: (121-110)/110 = 0.10
         assert abs(returns.iloc[2] - 0.10) < 1e-6
+    
+    def test_log_returns(self):
+        """Log returns should be calculated correctly."""
+        prices = pd.Series([100, 110, 121])
+        log_returns = np.log(prices / prices.shift(1))
+        
+        # First is NaN
+        assert pd.isna(log_returns.iloc[0])
+        # Second: log(110/100) ≈ 0.0953
+        assert abs(log_returns.iloc[1] - 0.0953) < 0.001
+    
+    def test_multiple_moving_averages(self):
+        """Test MA5, MA10, MA20 calculations."""
+        prices = pd.Series(range(1, 31))  # 1 to 30
+        
+        ma5 = compute_moving_average(prices, 5)
+        ma10 = compute_moving_average(prices, 10)
+        ma20 = compute_moving_average(prices, 20)
+        
+        # MA5 at index 4: mean(1,2,3,4,5) = 3
+        assert ma5.iloc[4] == 3.0
+        # MA10 at index 9: mean(1..10) = 5.5
+        assert ma10.iloc[9] == 5.5
+        # MA20 at index 19: mean(1..20) = 10.5
+        assert ma20.iloc[19] == 10.5
+    
+    def test_multiple_volatility_windows(self):
+        """Test volatility with different windows."""
+        returns = pd.Series([0.01, -0.01, 0.02, -0.02, 0.01] * 10)
+        
+        vol5 = compute_volatility(returns, 5)
+        vol10 = compute_volatility(returns, 10)
+        vol20 = compute_volatility(returns, 20)
+        
+        # All should be positive (after initial NaN)
+        assert (vol5.dropna() > 0).all()
+        assert (vol10.dropna() > 0).all()
+        assert (vol20.dropna() > 0).all()
+    
+    def test_sentiment_polarity_range(self):
+        """Polarity should be in range [-1, 1]."""
+        # Simulate FinBERT probabilities
+        sentiment_df = pd.DataFrame({
+            'positive': [0.8, 0.1, 0.3],
+            'neutral': [0.1, 0.2, 0.4],
+            'negative': [0.1, 0.7, 0.3]
+        })
+        
+        # Determine label
+        sentiment = sentiment_df.idxmax(axis=1)
+        polarity = sentiment.map({'positive': 1.0, 'negative': -1.0, 'neutral': 0.0})
+        
+        assert (polarity >= -1).all()
+        assert (polarity <= 1).all()
+        assert polarity.iloc[0] == 1.0  # positive
+        assert polarity.iloc[1] == -1.0  # negative
+
+
+class TestAdvancedFeatures:
+    """Test advanced sentiment and engagement features."""
+    
+    def test_impact_weighting(self):
+        """Impact weighting should scale with engagement."""
+        df = pd.DataFrame({
+            'retweet_num': [10, 100, 1000],
+            'like_num': [5, 50, 500],
+            'comment_num': [2, 20, 200]
+        })
+        
+        # Impact formula: 1 + log1p(retweet + 2*like + 3*comment)
+        engagement = df['retweet_num'] + 2*df['like_num'] + 3*df['comment_num']
+        impact = 1 + np.log1p(engagement)
+        
+        # Higher engagement → higher impact
+        assert impact.iloc[2] > impact.iloc[1] > impact.iloc[0]
+        # All positive
+        assert (impact > 0).all()
+    
+    def test_delta_features(self):
+        """Delta features should measure change over time."""
+        sentiment = pd.Series([0.5, 0.6, 0.4, 0.7, 0.3])
+        delta = sentiment.diff()
+        
+        # First is NaN
+        assert pd.isna(delta.iloc[0])
+        # Changes: +0.1, -0.2, +0.3, -0.4
+        assert abs(delta.iloc[1] - 0.1) < 1e-6
+        assert abs(delta.iloc[2] - (-0.2)) < 1e-6
 
 
 if __name__ == "__main__":

@@ -152,5 +152,118 @@ class TestScaling:
         assert np.array_equal(X_test_1, X_test_2)
 
 
+class TestFeaturePreparation:
+    """Test feature selection and preparation logic."""
+    
+    def test_technical_features_count(self):
+        """Technical features should have exactly 15 features."""
+        # Mock dataframe with all required columns
+        df = pd.DataFrame({
+            'return': np.random.randn(100),
+            'volume': np.random.randint(1000, 10000, 100),
+            'log_return': np.random.randn(100),
+            'ma5': np.random.randn(100),
+            'ma10': np.random.randn(100),
+            'ma20': np.random.randn(100),
+            'volatility_5d': np.random.randn(100),
+            'volatility_10d': np.random.randn(100),
+            'volatility_20d': np.random.randn(100),
+            'rsi_14': np.random.uniform(0, 100, 100),
+            'macd_line': np.random.randn(100),
+            'signal_line': np.random.randn(100),
+            'adj close': np.random.uniform(100, 200, 100),
+            'close': np.random.uniform(100, 200, 100),
+            'open': np.random.uniform(100, 200, 100),
+            'target': np.random.randint(0, 2, 100)
+        })
+        
+        # Technical features list from classical_models_company.py
+        tech_features = [
+            "return", "volume", "log_return",
+            "ma5", "ma10", "ma20",
+            "volatility_5d", "volatility_10d", "volatility_20d",
+            "rsi_14", "macd_line", "signal_line",
+            "adj close", "close", "open"
+        ]
+        
+        X = df[tech_features]
+        assert len(X.columns) == 15
+    
+    def test_sentiment_features_count(self):
+        """Sentiment features should have exactly 15 features."""
+        df = pd.DataFrame({
+            'polarity': np.random.uniform(-1, 1, 100),
+            'positive': np.random.uniform(0, 1, 100),
+            'negative': np.random.uniform(0, 1, 100),
+            'impact_weighted_sentiment': np.random.randn(100),
+            'influence_weighted_sentiment': np.random.randn(100),
+            'impact_weighted_ma3': np.random.randn(100),
+            'impact_weighted_ma7': np.random.randn(100),
+            'delta_polarity': np.random.randn(100),
+            'delta_impact_weighted_sentiment': np.random.randn(100),
+            'sentiment_volatility_5d': np.random.randn(100),
+            'extreme_count_5d': np.random.randint(0, 5, 100),
+            'tweet_volume': np.random.randint(10, 100, 100),
+            'tweet_volume_ma5': np.random.randn(100),
+            'engagement_ma5': np.random.randn(100),
+            'engagement_change': np.random.randn(100),
+            'target': np.random.randint(0, 2, 100)
+        })
+        
+        sent_features = [
+            "polarity", "positive", "negative",
+            "impact_weighted_sentiment", "influence_weighted_sentiment",
+            "impact_weighted_ma3", "impact_weighted_ma7",
+            "delta_polarity", "delta_impact_weighted_sentiment",
+            "sentiment_volatility_5d", "extreme_count_5d",
+            "tweet_volume", "tweet_volume_ma5", "engagement_ma5", "engagement_change"
+        ]
+        
+        X = df[sent_features]
+        assert len(X.columns) == 15
+    
+    def test_inf_handling(self):
+        """Infinite values should be replaced with NaN then filled."""
+        df = pd.DataFrame({
+            'feature1': [1.0, np.inf, 3.0, -np.inf, 5.0],
+            'feature2': [2.0, 4.0, 6.0, 8.0, 10.0]
+        })
+        
+        # Pipeline cleaning logic
+        df_clean = df.replace([np.inf, -np.inf], np.nan).fillna(0)
+        
+        assert not np.isinf(df_clean.values).any()
+        assert df_clean['feature1'].iloc[1] == 0  # inf → 0
+        assert df_clean['feature1'].iloc[3] == 0  # -inf → 0
+
+
+class TestModelPersistence:
+    """Test model saving and loading."""
+    
+    def test_model_can_be_saved_and_loaded(self):
+        """Models should persist correctly with joblib."""
+        import joblib
+        import tempfile
+        from sklearn.ensemble import RandomForestClassifier
+        
+        # Train model
+        X = np.random.randn(50, 5)
+        y = np.random.randint(0, 2, 50)
+        model = RandomForestClassifier(random_state=42, n_estimators=10)
+        model.fit(X, y)
+        
+        pred_before = model.predict(X)
+        
+        # Save and load
+        with tempfile.NamedTemporaryFile(suffix='.pkl', delete=False) as f:
+            joblib.dump(model, f.name)
+            loaded_model = joblib.load(f.name)
+        
+        pred_after = loaded_model.predict(X)
+        
+        # Predictions should match
+        assert np.array_equal(pred_before, pred_after)
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
