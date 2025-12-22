@@ -102,15 +102,15 @@
     \section{Introduction}
     \label{sec:introduction}
 
-    In a context where information flows at unprecedented speed, social media plays a central role in shaping opinions and financial expectations. Twitter, in particular, has become a platform where investors share real-time reactions to economic news. Recent events demonstrate its capacity to impact markets: Donald Trump's statements on trade tensions and Elon Musk's tweets about Tesla and cryptocurrencies caused immediate stock movements \cite{bartels2025, wang2025}.
+   In a context where information flows at unprecedented speed, social media has assumed a central role in shaping opinions and financial expectations. Twitter, in particular, has become a critical platform where investors share real-time reactions to economic news. Recent events demonstrate its capacity to impact markets: Donald Trump’s statements on trade tensions and Elon Musk’s tweets about Tesla and cryptocurrencies have caused immediate and significant stock movements \cite{bartels2025, wang2025}.
+   
+   These examples highlight the market’s extreme sensitivity to collective emotional dynamics. Yet, this landscape is further complicated by artificial intelligence. While trading algorithms and generative models enhance informational efficiency, they also increase vulnerability by amplifying human biases and emotional reactions on a global scale   \cite{araci2019}. Consequently, the interaction between algorithmic trading and viral sentiment creates a volatile environment where collective emotions are rapidly priced in.
+   
+   Therefore, understanding how digital emotions influence investment decisions is essential for behavioral finance. Initiated by Shiller \cite{shiller2003}, this field studies the impact of psychological biases on price formation. While Bollen et al. \cite{bollen2011} notably demonstrated that Twitter mood fluctuations correlate with the Dow Jones, a finding consistent with numerous subsequent studies linking general investor sentiment to market performance.
 
-    These examples highlight how sensitive financial markets have become to collective emotional dynamics amplified by social media. Simultaneously, artificial intelligence (AI) has transformed market responses. While trading algorithms and generative models enhance informational efficiency, they also increase vulnerability to emotional behavior and cognitive biases reproduced on a large scale \cite{araci2019}.
+    However, while previous studies established a relationship between public sentiment and financial performance, the precise mechanisms remain less explored. Yet, recent progress in data availability offers new possibilities to quantify investor emotions in real-time, using Twitter as a unique setting to observe how collective reactions emerge and influence asset prices.
 
-    Therefore, understanding how digital emotions influence investment decisions is essential for behavioral finance. Initiated by Shiller \cite{shiller2003}, this field studies the impact of psychological biases on price formation. Bollen et al. \cite{bollen2011} notably demonstrated that Twitter mood fluctuations correlate with the Dow Jones, a finding consistent with numerous subsequent studies linking general investor sentiment to market performance.
-
-    However, most research remains limited to descriptive or correlational analyses. Leveraging advancements in natural language processing (NLP) and machine learning, this project moves beyond broad indices to test the predictive ability of sentiment analysis on stock-level variations for six major NASDAQ companies. We compare sentiment-based models directly against models trained solely on technical indicators.
-
-    While previous studies established a relationship between public sentiment and financial performance, the precise mechanisms remain less explored. Recent progress in data availability offers new possibilities to quantify investor emotions in real-time. In this landscape, Twitter provides a unique setting to observe how collective reactions emerge and influence asset prices \cite{sul2016, zhang2010}.
+    Leveraging these advancements in natural language processing (NLP) and machine learning, this project moves beyond broad indices to test the predictive ability of sentiment analysis on stock-level variations for six major NASDAQ companies. By focusing on specific assets rather than general market trends, we compare sentiment-based models directly against models trained solely on technical indicators.
 
     \subsection{Report Organization}
     The remainder of this report is organized as follows: Section~\ref{sec:literature} reviews the research question and literature foundations. Section~\ref{sec:methodology} describes the data and modeling approach. Section~\ref{sec:implementation} discusses key technical decisions. Section~\ref{sec:codebase} explains reproducibility. Section~\ref{sec:results} presents findings with interpretation. Finally, Section~\ref{sec:conclusion} summarizes contributions and limitations.
@@ -215,7 +215,7 @@
 
     \subsection{Experimental Setup}
 
-    \textbf{Hardware:} Model training and backtesting performed on Windows 11 Pro laptop (Intel Core i5-11300H, 32 GB RAM, GeForce RTX 4060). FinBERT sentiment classification (4M tweets, 5-6 hours) executed on ASUS ZenBook Pro Duo (Intel Core i9-13th Gen, 32 GB RAM, GeForce RTX 4060) with GPU acceleration.
+    \textbf{Hardware:} Model training and backtesting performed on Windows Surface Laptop Studio (Intel Core i5-11300H, 32 GB RAM, GeForce RTX 4060). FinBERT sentiment classification (4M tweets, 5-6 hours) executed on ASUS ZenBook Pro Duo (Intel Core i9-13th Gen, 32 GB RAM, GeForce RTX 4060) with GPU acceleration.
 
     \vspace{1mm}\textbf{Software:} Python 3.11.5, pandas 2.1.1, numpy 1.26.0, scikit-learn 1.3.1, XGBoost 2.0.0, TensorFlow 2.13.0, transformers 4.33.2, yfinance 0.2.28, matplotlib 3.8.0, seaborn 0.13.0 (pinned in \texttt{requirements.txt} and \texttt{environment.yml}).
 
@@ -234,11 +234,11 @@
 
     \subsection{Reproducibility Measures}
 
-To ensure reproducibility, several measures were implemented. All stochastic components are controlled via a global random seed (\texttt{SEED=42}), applied across sklearn's \texttt{random\_state}, TensorFlow's \texttt{tf.random.set\_seed()}, numpy's \texttt{np.random.seed()}, and the \texttt{PYTHONHASHSEED} environment variable, ensuring deterministic results across runs. Feature ordering is preserved through \texttt{feature\_order.pkl} files for each company, preventing positional misalignment errors in sklearn models. The temporal train/test split (2015-2018 vs 2019) prevents data leakage by maintaining strict chronological separation.
+    To ensure reproducibility, several measures were implemented. All stochastic components are controlled via a global random seed (\texttt{SEED=42}), applied across sklearn's \texttt{random\_state}, TensorFlow's \texttt{tf.random.set\_seed()}, numpy's \texttt{np.random.seed()}, and the \texttt{PYTHONHASHSEED} environment variable, ensuring deterministic results across runs. Feature ordering is preserved through \texttt{feature\_order.pkl} files for each company, preventing positional misalignment errors in sklearn models. The temporal train/test split (2015-2018 vs 2019) prevents data leakage by maintaining strict chronological separation.
 
-Two preprocessing files are cached to ensure 100\% reproducibility: (1) \texttt{tweet\_sentiment.csv} bypasses FinBERT's 5-6 hour processing, and (2) \texttt{company\_stock\_data.csv} prevents Yahoo Finance API micro-variations in floating-point precision that break deterministic hashing.
+    Two preprocessing files are cached to ensure 100\% reproducibility: (1) \texttt{tweet\_sentiment.csv} bypasses FinBERT's 5-6 hour processing, and (2) \texttt{company\_stock\_data.csv} prevents Yahoo Finance API micro-variations in floating-point precision that break deterministic hashing.
 
-For model-level determinism: LSTM uses CPU-only execution (\texttt{CUDA\_VISIBLE\_DEVICES=-1}), single-threaded operations (\texttt{set\_intra\_op\_parallelism\_threads(1)}), and seeded layer initializers. Random Forest enforces \texttt{n\_jobs=1} for single-threaded execution. XGBoost uses \texttt{tree\_method='exact'} with \texttt{nthread=1}. All DataFrame operations use explicit \texttt{sort\_values()} to ensure deterministic row ordering.    \section{Results}
+    For model-level determinism: LSTM uses CPU-only execution (\texttt{CUDA\_VISIBLE\_DEVICES=-1}), single-threaded operations (\texttt{set\_intra\_op\_parallelism\_threads(1)}), and seeded layer initializers. Random Forest enforces \texttt{n\_jobs=1} for single-threaded execution. XGBoost uses \texttt{tree\_method='exact'} with \texttt{nthread=1}. All DataFrame operations use explicit \texttt{sort\_values()} to ensure deterministic row ordering.    \section{Results}
     \label{sec:results}
 
     This section presents the backtesting performance of 48 models (8 models × 6 stocks) trained on technical versus sentiment features, evaluated on the 2019 test period. The analysis focuses on three complementary metrics: Total Return, Sharpe Ratio (risk-adjusted performance), and Maximum Drawdown (downside risk).
@@ -270,55 +270,55 @@ For model-level determinism: LSTM uses CPU-only execution (\texttt{CUDA\_VISIBLE
     \end{samepage}
     \vspace{-0.3cm}
     However, it is crucial to note that sentiment models did not consistently outperform the Buy \& Hold benchmark. In three of six stocks (AAPL, GOOG, MSFT), Buy \& Hold achieved superior returns. Three stocks saw sentiment models surpass the passive strategy: GOOGL (LR +31.7\% vs +16.4\%), AMZN (RF +24.3\% vs +13.6\%), and TSLA (LSTM +58.1\% vs +49.9\%). This mixed performance reflects the strong bull market conditions during 2019, where holding positions captured sustained upward trends more effectively than active trading strategies based on daily predictions.
-\vspace{-0.4cm}
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.42\textwidth]{results/figures_company/overall_performance_comparison.png}
-\caption{Total returns comparison across all stocks (2019 test period)}
-\label{fig:overall_performance}
-\end{figure}
-\vspace{-0.3cm}
+    \vspace{-0.4cm}
+    \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.42\textwidth]{results/figures_company/overall_performance_comparison.png}
+    \caption{Total returns comparison across all stocks (2019 test period)}
+    \label{fig:overall_performance}
+    \end{figure}
+    \vspace{-0.3cm}
 
-Figure~\ref{fig:overall_performance} visualizes the average performance of the best technical model, best sentiment model, and Buy \& Hold strategy across all six stocks. Sentiment models outperformed technical models by an average of 0.68\% across the portfolio, demonstrating modest but consistent superiority on individual stocks. 
+    Figure~\ref{fig:overall_performance} visualizes the average performance of the best technical model, best sentiment model, and Buy \& Hold strategy across all six stocks. Sentiment models outperformed technical models by an average of 0.68\% across the portfolio, demonstrating modest but consistent superiority on individual stocks. 
 
-Figure~\ref{fig:equity_curves} displays the equity curve trajectories for the best-performing model of each stock throughout the 2019 test period, illustrating the cumulative wealth evolution and revealing the timing and magnitude of gains. The smoother curves for sentiment-based models (TSLA, GOOGL, AMZN) compared to more volatile Buy \& Hold trajectories demonstrate the capital preservation advantage discussed below. A detailed breakdown of individual model performance across all stocks is presented in Appendix~\ref{app:figures}, where Figure~\ref{fig:returns_all} shows the complete distribution of returns for each algorithm and feature type, revealing consistent sentiment superiority across multiple modeling approaches.
+    Figure~\ref{fig:equity_curves} displays the equity curve trajectories for the best-performing model of each stock throughout the 2019 test period, illustrating the cumulative wealth evolution and revealing the timing and magnitude of gains. The smoother curves for sentiment-based models (TSLA, GOOGL, AMZN) compared to more volatile Buy \& Hold trajectories demonstrate the capital preservation advantage discussed below. A detailed breakdown of individual model performance across all stocks is presented in Appendix~\ref{app:figures}, where Figure~\ref{fig:returns_all} shows the complete distribution of returns for each algorithm and feature type, revealing consistent sentiment superiority across multiple modeling approaches.
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.72\textwidth]{results/figures_company/equity_curves.png}
-\caption{Equity curves of best models for each stock (2019 test period)}
-\label{fig:equity_curves}
-\end{figure}
-\vspace{-0.5cm}
-
+    \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.72\textwidth]{results/figures_company/equity_curves.png}
+    \caption{Equity curves of best models for each stock (2019 test period)}
+    \label{fig:equity_curves}
+    \end{figure}
+    \vspace{-0.5cm}
+    
     \subsection{Risk-Adjusted Performance and Drawdown Analysis}
-
-Although sentiment models did not consistently beat Buy \& Hold in absolute returns, they demonstrated superior risk-adjusted performance through systematically lower Maximum Drawdowns. Figure~\ref{fig:drawdown_comparison} compares the average Maximum Drawdown for technical versus sentiment models across all stocks and algorithms.
-
-\begin{figure}[H]
-\centering
-\begin{subfigure}[b]{0.49\textwidth}
+    
+    Although sentiment models did not consistently beat Buy \& Hold in absolute returns, they demonstrated superior risk-adjusted performance through systematically lower Maximum Drawdowns. Figure~\ref{fig:drawdown_comparison} compares the Maximum Drawdown for technical and sentiment models against the Buy & Hold strategy across all stocks and algorithms.
+    
+    \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{results/figures_company/drawdown_technical.png}
-    \caption{Technical features}
-    \label{fig:drawdown_tech}
-\end{subfigure}
-\hfill
-\begin{subfigure}[b]{0.49\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{results/figures_company/drawdown_sentiment.png}
-    \caption{Sentiment features}
-    \label{fig:drawdown_sent}
-\end{subfigure}
-\caption{Maximum Drawdown analysis across all stocks. Sentiment-based models consistently exhibit lower drawdowns, indicating better capital preservation during market downturns.}
-\label{fig:drawdown_comparison}
-\end{figure}
-\vspace{-0.4cm}
-
-As shown in Figure~\ref{fig:drawdown_comparison}, sentiment models achieved lower or comparable drawdowns on five of six stocks. The most striking differences appear on MSFT (sentiment: -5.94\% vs technical: -17.94\%), AAPL (sentiment: -5.21\% vs technical: -13.48\%), GOOGL (sentiment: -4.71\% vs technical: -12.01\%), and TSLA (sentiment: -15.44\% vs technical: -35.39\%). This pattern suggests that sentiment features capture early warning signals of market psychology shifts, enabling models to exit positions before sustained corrections materialize.
-
-The aggregated view in Figure~\ref{fig:performance_metrics} (Appendix~\ref{app:figures}) confirms this trend, showing that average equity curves for sentiment models exhibit smoother trajectories with fewer sharp declines compared to technical models, while overall drawdown metrics demonstrate the consistency of this risk reduction benefit across the entire portfolio.
-
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{results/figures_company/drawdown_technical.png}
+        \caption{Technical features}
+        \label{fig:drawdown_tech}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{results/figures_company/drawdown_sentiment.png}
+        \caption{Sentiment features}
+        \label{fig:drawdown_sent}
+    \end{subfigure}
+    \caption{Maximum Drawdown analysis across all stocks. Sentiment-based models consistently exhibit lower drawdowns, indicating better capital preservation during market downturns.}
+    \label{fig:drawdown_comparison}
+    \end{figure}
+    \vspace{-0.4cm}
+    
+    As shown in Figure~\ref{fig:drawdown_comparison}, sentiment models achieved lower or comparable drawdowns on five of six stocks. The most striking differences appear on MSFT (sentiment: -5.94\% vs technical: -17.94\%), AAPL (sentiment: -5.21\% vs technical: -13.48\%), GOOGL (sentiment: -4.71\% vs technical: -12.01\%), and TSLA (sentiment: -15.44\% vs technical: -35.39\%). This pattern suggests that sentiment features capture early warning signals of market psychology shifts, enabling models to exit positions before sustained corrections materialize.
+    
+    The aggregated view in Figure~\ref{fig:performance_metrics} (Appendix~\ref{app:figures}) confirms this trend, showing that average equity curves for sentiment models exhibit smoother trajectories with fewer sharp declines compared to technical models, while overall drawdown metrics demonstrate the consistency of this risk reduction benefit across the entire portfolio.
+    
     \medskip Sharpe Ratios reinforce this capital preservation advantage (see Appendix~\ref{app:sharpe_table} for complete comparison across all models). Sentiment models achieved superior risk-adjusted returns on four of six stocks: GOOGL (2.63 vs 1.34), AAPL (2.46 vs 1.46), AMZN (1.61 vs 0.90), and MSFT (2.80 vs 1.97). GOOG showed comparable performance (1.46 vs 0.94), while TSLA uniquely favored sentiment LSTM (1.74) over technical LSTM (0.58). The combination of controlled drawdowns and competitive Sharpe Ratios demonstrates that sentiment models deliver more consistent returns relative to their volatility, positioning them as effective risk management tools rather than profit maximizers.
 
     \subsection{Algorithm-Specific Observations}
@@ -327,13 +327,13 @@ The aggregated view in Figure~\ref{fig:performance_metrics} (Appendix~\ref{app:f
 
     LSTM models showed divergent performance across feature types. LSTM-sentiment achieved exceptional results on AAPL (49.34\%, Sharpe 2.46) and TSLA (58.06\%, Sharpe 1.74), becoming the best sentiment model on two stocks. However, LSTM-technical also performed competitively on MSFT (27.55\%, Sharpe 1.97) and GOOGL (20.93\%, Sharpe 1.34). This suggests LSTM can effectively model both sentiment and technical patterns when sufficient data exists, though classical algorithms remain more reliable across diverse market conditions.
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.70\textwidth]{results/figures_company/winners_technical_vs_sentiment.png}
-\caption{Direct comparison of best technical vs sentiment models for each stock}
-\label{fig:winners_comparison}
-\end{figure}
-\vspace{-0.4cm}
+    \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.70\textwidth]{results/figures_company/winners_technical_vs_sentiment.png}
+    \caption{Direct comparison of best technical vs sentiment models for each stock}
+    \label{fig:winners_comparison}
+    \end{figure}
+    \vspace{-0.4cm}
 
     Figure~\ref{fig:winners_comparison} shows that sentiment models outperform technical models on all six stocks. The outperformance varies significantly: TSLA shows the largest advantage (+47.0\%, sentiment LSTM 58.1\% vs technical LSTM 11.1\%), followed by AAPL (+25.1\%), AMZN (+12.6\%), GOOGL (+10.8\%), while GOOG and MSFT show modest gains (+3.8\% and +9.1\%). This variation suggests that sentiment's predictive value depends on company-specific characteristics, with high-retail-participation stocks (TSLA, AAPL) benefiting most from Twitter sentiment signals.
     
@@ -344,7 +344,7 @@ The aggregated view in Figure~\ref{fig:performance_metrics} (Appendix~\ref{app:f
 
     The empirical results reveal a critical insight: sentiment-based models excel at \textbf{risk mitigation} rather than profit maximization. While sentiment models outperformed technical models on all six stocks with return advantages ranging from +3.8\% (GOOG) to +47.0\% (TSLA), averaging +18\% outperformance, Buy \& Hold outperformed active strategies in three of six cases (AAPL, GOOG, MSFT) during the 2019 bull market. This mixed performance reflects sentiment's true value proposition: capital preservation rather than aggressive return generation.
 
-    The risk-adjusted metrics provide compelling evidence for this positioning. Sentiment models achieved superior Sharpe Ratios on four of six stocks: GOOGL (2.63 vs 1.34), AAPL (2.46 vs 1.46), AMZN (1.61 vs 0.90), and MSFT (2.80 vs 1.97). These superior Sharpe Ratios indicate that sentiment models generate \textbf{positive alpha}—excess risk-adjusted returns beyond what the Capital Asset Pricing Model (CAPM) predicts from systematic market risk alone. This alpha generation validates that sentiment features provide a distinct information source not captured by traditional technical indicators or market beta exposure.
+    The risk-adjusted metrics provide compelling evidence for this positioning. Sentiment models achieved superior Sharpe Ratios on four of six stocks: GOOGL (2.63 vs 1.34), AAPL (2.46 vs 1.46), AMZN (1.61 vs 0.90), and MSFT (2.80 vs 1.97). These superior Sharpe Ratios indicate that sentiment models generate \textbf{positive alpha}, excess risk-adjusted returns beyond what the Capital Asset Pricing Model (CAPM) predicts from systematic market risk alone. This alpha generation validates that sentiment features provide a distinct information source not captured by traditional technical indicators or market beta exposure.
 
     Most striking are the systematically lower Maximum Drawdowns across the portfolio. Sentiment models demonstrated controlled downside risk with particularly notable differences on MSFT (sentiment: -5.94\% vs technical: -17.94\%), AAPL (sentiment: -5.21\% vs technical: -13.48\%), GOOGL (sentiment: -4.71\% vs technical: -12.01\%), and TSLA (sentiment: -15.44\% vs technical: -35.39\%). This pattern suggests that sentiment features capture early warning signals of market psychology shifts, enabling models to exit positions before sustained corrections materialize. The combination of controlled drawdowns and competitive Sharpe Ratios positions sentiment-driven strategies as \textbf{capital preservation tools} particularly valuable for investors with strict drawdown constraints or low risk tolerance.
 
@@ -352,17 +352,17 @@ The aggregated view in Figure~\ref{fig:performance_metrics} (Appendix~\ref{app:f
 
     A counterintuitive finding emerges from the classification metrics: despite moderate accuracy (49-57\%) and F1-scores (50-67\%) across stocks (see Table~\ref{tab:classification_metrics}), sentiment models achieved strong backtesting returns. This apparent contradiction reveals a fundamental insight about the nature of sentiment-driven trading signals.
 
-    The predictive value does not lie in balanced classification accuracy, but rather in the \textbf{directional reliability of upward predictions}. Sentiment models function as \textbf{selective opportunity identifiers} rather than comprehensive predictors. They excel at identifying high-confidence upward signals while prudently staying in cash during uncertain periods, creating an asymmetric performance profile—strong at detecting opportunities, weak at predicting declines. This behavior directly justifies the long-only strategy design adopted after observing poor model accuracy in predicting downward movements.
+    The predictive value does not lie in balanced classification accuracy, but rather in the \textbf{directional reliability of upward predictions}. Sentiment models function as \textbf{selective opportunity identifiers} rather than comprehensive predictors. They excel at identifying high-confidence upward signals while prudently staying in cash during uncertain periods, creating an asymmetric performance profile, strong at detecting opportunities, weak at predicting declines. This behavior directly justifies the long-only strategy design adopted after observing poor model accuracy in predicting downward movements.
 
     This selective approach demonstrates that moderate overall accuracy can still yield strong risk-adjusted returns when the model excels at its primary task: identifying actionable entry signals. The models avoid false signals during market uncertainty, preferring cash positions over risky predictions. This conservative stance contributes to the observed capital preservation benefits, as the models refrain from trading during periods when prediction confidence is low. The financial performance thus stems not from predicting all market movements correctly, but from correctly identifying high-probability upward movements while minimizing exposure during uncertain conditions.
 
     \subsection{Market Context and Stock-Specific Heterogeneity}
 
-    The stock-specific variation in sentiment's predictive power reveals important patterns about when and where Twitter sentiment provides actionable signals. Sentiment advantages range dramatically from +47.0\% (TSLA) to +25.1\% (AAPL), +12.6\% (AMZN), +10.8\% (GOOGL), +9.1\% (MSFT), with GOOG showing the smallest gain (+3.8\%). This heterogeneity is not random—it correlates strongly with company-specific characteristics.
+    The stock-specific variation in sentiment's predictive power reveals important patterns about when and where Twitter sentiment provides actionable signals. Sentiment advantages range dramatically from +47.0\% (TSLA) to +25.1\% (AAPL), +12.6\% (AMZN), +10.8\% (GOOGL), +9.1\% (MSFT), with GOOG showing the smallest gain (+3.8\%). This heterogeneity is not random, it correlates strongly with company-specific characteristics.
 
     High-retail-participation stocks (TSLA, AAPL) show the largest sentiment advantages, suggesting Twitter sentiment's usefulness depends on factors such as retail investor concentration, media coverage intensity, and social media activity levels. Stocks with frequent social media discourse and high retail trading volumes amplify sentiment signals, as collective emotions expressed on Twitter more directly reflect the investor base actually trading these securities. Conversely, institutionally-dominated stocks (GOOG) with lower retail participation respond more weakly to aggregated Twitter sentiment, as institutional investors likely rely on different information sources.
 
-    The 2019 bull market context further explains why Buy \& Hold outperformed active strategies on half the portfolio. During sustained upward trends, holding positions captures momentum more effectively than daily trading signals that trigger frequent cash positions. This underperformance relative to Buy \& Hold does not invalidate sentiment models' value—rather, it reinforces their positioning as defensive tools.
+    The 2019 bull market context further explains why Buy \& Hold outperformed active strategies on half the portfolio. During sustained upward trends, holding positions captures momentum more effectively than daily trading signals that trigger frequent cash positions. This underperformance relative to Buy \& Hold does not invalidate sentiment models' value, rather, it reinforces their positioning as defensive tools.
     
     \medskip In more volatile or bearish market conditions, the capital preservation benefits observed through lower drawdowns would likely translate into outperformance relative to Buy \& Hold, as the models' ability to exit before corrections would prevent the severe losses that passive strategies must endure.
 
@@ -375,7 +375,7 @@ The aggregated view in Figure~\ref{fig:performance_metrics} (Appendix~\ref{app:f
 
     This study investigated whether Twitter sentiment can predict short-term daily stock movements for six NASDAQ companies more effectively than technical indicators. The empirical analysis of 48 models (4 algorithms $\times$ 2 feature types $\times$ 6 stocks) demonstrates that sentiment-based models outperformed technical models on all six stocks, with return advantages ranging from +3.8\% to +47.0\% (average +18\%). However, Buy \& Hold outperformed active strategies in three stocks (AAPL, GOOG, MSFT), reflecting 2019's bull market conditions.
    
-     \medskip The key contribution lies in \textbf{risk mitigation}: sentiment models achieved superior Sharpe Ratios on four of six stocks and significantly lower Maximum Drawdowns on key stocks (e.g., MSFT: -5.94\% vs -17.94\%, AAPL: -5.21\% vs -13.48\%), validating that FinBERT-derived sentiment features capture market psychology shifts enabling capital preservation during corrections. This positions sentiment-driven strategies as risk management tools rather than profit maximizers, offering practical value for defensive investment approaches.
+     \medskip The key contribution lies in \textbf{risk mitigation}: sentiment models achieved superior Sharpe Ratios on four of six stocks and significantly lower Maximum Drawdowns on key stocks, validating that FinBERT-derived sentiment features capture market psychology shifts enabling capital preservation during corrections. This positions sentiment-driven strategies as risk management tools rather than profit maximizers, offering practical value for defensive investment approaches.
 
     \medskip The comparison of multiple machine learning algorithms revealed distinct performance patterns: ensemble methods (Random Forest, XGBoost) consistently outperformed linear models and LSTM networks when trained on sentiment features, while LSTM architectures excelled with technical indicators. This algorithm-specific behavior suggests that sentiment signals require different modeling approaches than traditional price-based features, with tree-based methods better suited to capture the non-linear relationships between collective emotions and market movements.
 
@@ -383,10 +383,10 @@ The aggregated view in Figure~\ref{fig:performance_metrics} (Appendix~\ref{app:f
 
     Several limitations constrain the scope and generalizability of this study:
 
-    \vspace{1mm}\textbf{Limited temporal coverage and data sparsity:} Despite collecting \textasciitilde4 million tweets (2015-2019), daily aggregation reduces the dataset to approximately 1,250 trading days per company. This constrains the models' ability to learn complex patterns and prevents evaluation of recent market conditions where social media influence has grown significantly.
+    \vspace{1mm}\textbf{Limited temporal coverage and data sparsity:} Despite collecting \textasciitilde4 million tweets (2015-2019), daily aggregation reduces the dataset to approximately 1,250 trading days per company. This constrains the models' ability to learn complex patterns and prevents evaluation of recent market conditions where social media influence has grown significantly. Furthermore, this level of aggregation masks intraday volatility and rapid sentiment shifts, preventing the model from capturing the immediate impact of breaking news that occurs within trading hours.s
 
      \vspace{1mm}\textbf{Simplified trading strategy:} The long-only back-testing strategy reflects the models' inability to reliably predict downward movements. Incorporating short positions would have further degraded performance, indicating that sentiment-based models did not learn meaningful predictive patterns during this period. This strategic simplification is a direct consequence of insufficient signal strength in the data, not a methodological choice.
-     
+    
     \medskip\textbf{Twitter's limited influence in 2015-2019:} During the study period, Twitter's impact on financial markets was less pronounced than in 2025. While influential figures like Elon Musk or Donald Trump can move markets with single tweets today, the dataset predominantly captures tweets from ordinary users with negligible individual market impact. \textbf{This dilution of signal by mass noise directly explains the moderate classification metrics (Accuracy $\approx$ 53\%, F1 $\approx$ 55\%).} The core limitation is that aggregated sentiment from thousands of small accounts does not reliably predict stock movements, whereas targeted analysis of influential accounts might yield stronger signals.
 
     \vspace{1mm}\textbf{Transaction costs:} The backtesting framework excludes commissions, spreads, and slippage, which would reduce real-world returns. However, typical transaction costs (0.1-0.2\% per trade) are unlikely to eliminate the observed advantages, particularly on stocks where sentiment models generate significant alpha (GOOGL, MSFT, AAPL, AMZN). The low-turnover nature of long-only daily signals further minimizes cost impact.
@@ -429,168 +429,168 @@ The aggregated view in Figure~\ref{fig:performance_metrics} (Appendix~\ref{app:f
     \section{Additional Figures and Performance Tables}
     \label{app:figures}
 
-\subsection*{Sharpe Ratios Comparison}
-\label{app:sharpe_table}
-\vspace{-0.3cm}
-
-\begin{table}[H]
-\centering
-\caption{Sharpe Ratios for All Models Across Stocks (2019 Test Period)}
-\scriptsize
-\setlength{\tabcolsep}{2.5pt}
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{l|cccc|cccc}
-\toprule
-& \multicolumn{4}{c|}{\textbf{Technical Models}} & \multicolumn{4}{c}{\textbf{Sentiment Models}} \\
-\textbf{Stock} & \textbf{LR} & \textbf{RF} & \textbf{XGB} & \textbf{LSTM} & \textbf{LR} & \textbf{RF} & \textbf{XGB} & \textbf{LSTM} \\
-\midrule
-AAPL & 1.46 & 0.21 & 1.25 & 1.03 & 0.18 & 1.55 & \textbf{2.46} & 2.46 \\
-GOOG & 1.09 & 0.94 & 0.82 & 0.05 & \textbf{1.46} & 0.06 & 1.15 & 0.04 \\
-GOOGL & -0.40 & 0.55 & -0.15 & 1.34 & \textbf{2.63} & 2.02 & 1.49 & 2.20 \\
-AMZN & 0.90 & -1.14 & -0.76 & 0.72 & 1.58 & \textbf{1.61} & 1.14 & 0.86 \\
-TSLA & -2.30 & -1.10 & -0.97 & 0.58 & 1.86 & 0.02 & -0.37 & \textbf{1.74} \\
-MSFT & -0.67 & -4.44 & -0.37 & 1.97 & 0.81 & \textbf{2.80} & 0.23 & 1.06 \\
-\bottomrule
-\end{tabular}
-\end{table}
-\vspace{0.2cm}
-
-\noindent Bold values indicate the best-performing sentiment model for each stock. Sentiment models achieved superior Sharpe Ratios on four of six stocks (GOOGL, AAPL, AMZN, MSFT), demonstrating better risk-adjusted returns.
-
-\subsection*{Classification Metrics}
-\vspace{-0.3cm}
-
-\begin{table}[H]
-\centering
-\caption{Classification Metrics Across All Stocks (2019 Test Period)}
-\label{tab:classification_metrics}
-\scriptsize
-\setlength{\tabcolsep}{3.5pt}
-\renewcommand{\arraystretch}{1.3}
-\begin{tabular}{l|cc|cc|cc|cc|cc|cc}
-\toprule
-& \multicolumn{2}{c|}{\textbf{AAPL}} & \multicolumn{2}{c|}{\textbf{GOOG}} & \multicolumn{2}{c|}{\textbf{GOOGL}} & \multicolumn{2}{c|}{\textbf{AMZN}} & \multicolumn{2}{c|}{\textbf{TSLA}} & \multicolumn{2}{c}{\textbf{MSFT}} \\
-\textbf{Model} & \textbf{Acc} & \textbf{F1} & \textbf{Acc} & \textbf{F1} & \textbf{Acc} & \textbf{F1} & \textbf{Acc} & \textbf{F1} & \textbf{Acc} & \textbf{F1} & \textbf{Acc} & \textbf{F1} \\
-\midrule
-\textbf{LR-Tech} & 0.570 & 0.690 & 0.510 & 0.420 & 0.498 & 0.315 & 0.518 & 0.601 & 0.520 & 0.580 & 0.545 & 0.630 \\
-\textbf{LR-Sent} & 0.494 & 0.513 & 0.530 & 0.510 & 0.514 & 0.508 & 0.550 & 0.589 & 0.510 & 0.565 & 0.560 & 0.650 \\
-\textbf{RF-Tech} & 0.446 & 0.498 & 0.495 & 0.485 & 0.518 & 0.494 & 0.518 & 0.639 & 0.535 & 0.610 & 0.550 & 0.645 \\
-\textbf{RF-Sent} & 0.578 & 0.619 & 0.545 & 0.565 & 0.542 & 0.594 & 0.550 & 0.641 & 0.525 & 0.590 & 0.570 & 0.670 \\
-\textbf{XGB-Tech} & 0.470 & 0.483 & 0.505 & 0.465 & 0.522 & 0.500 & 0.482 & 0.549 & 0.540 & 0.620 & 0.555 & 0.655 \\
-\textbf{XGB-Sent} & 0.546 & 0.578 & 0.535 & 0.545 & 0.554 & 0.582 & 0.522 & 0.583 & 0.530 & 0.600 & 0.565 & 0.665 \\
-\bottomrule
-\end{tabular}
-\end{table}
-\vspace{-0.3cm}
-
-\subsection*{Returns Comparison}
-\vspace{-0.2cm}
-
-\begin{figure}[H]
-\centering
-\begin{subfigure}[b]{0.49\textwidth}
+    \subsection*{Sharpe Ratios Comparison}
+    \label{app:sharpe_table}
+    \vspace{-0.3cm}
+    
+    \begin{table}[H]
     \centering
-    \includegraphics[width=\textwidth]{results/figures_company/returns_technical.png}
-    \caption{Technical models returns}
-\end{subfigure}
-\hfill
-\begin{subfigure}[b]{0.49\textwidth}
+    \caption{Sharpe Ratios for All Models Across Stocks (2019 Test Period)}
+    \scriptsize
+    \setlength{\tabcolsep}{2.5pt}
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{l|cccc|cccc}
+    \toprule
+    & \multicolumn{4}{c|}{\textbf{Technical Models}} & \multicolumn{4}{c}{\textbf{Sentiment Models}} \\
+    \textbf{Stock} & \textbf{LR} & \textbf{RF} & \textbf{XGB} & \textbf{LSTM} & \textbf{LR} & \textbf{RF} & \textbf{XGB} & \textbf{LSTM} \\
+    \midrule
+    AAPL & 1.46 & 0.21 & 1.25 & 1.03 & 0.18 & 1.55 & \textbf{2.46} & 2.46 \\
+    GOOG & 1.09 & 0.94 & 0.82 & 0.05 & \textbf{1.46} & 0.06 & 1.15 & 0.04 \\
+    GOOGL & -0.40 & 0.55 & -0.15 & 1.34 & \textbf{2.63} & 2.02 & 1.49 & 2.20 \\
+    AMZN & 0.90 & -1.14 & -0.76 & 0.72 & 1.58 & \textbf{1.61} & 1.14 & 0.86 \\
+    TSLA & -2.30 & -1.10 & -0.97 & 0.58 & 1.86 & 0.02 & -0.37 & \textbf{1.74} \\
+    MSFT & -0.67 & -4.44 & -0.37 & 1.97 & 0.81 & \textbf{2.80} & 0.23 & 1.06 \\
+    \bottomrule
+    \end{tabular}
+    \end{table}
+    \vspace{0.2cm}
+    
+    \noindent Bold values indicate the best-performing sentiment model for each stock. Sentiment models achieved superior Sharpe Ratios on four of six stocks (GOOGL, AAPL, AMZN, MSFT), demonstrating better risk-adjusted returns.
+    
+    \subsection*{Classification Metrics}
+    \vspace{-0.3cm}
+    
+    \begin{table}[H]
     \centering
-    \includegraphics[width=\textwidth]{results/figures_company/returns_sentiment.png}
-    \caption{Sentiment models returns}
-\end{subfigure}
-\caption{Overall returns comparison across all stocks and models}
-\label{fig:returns_all}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\begin{subfigure}[b]{0.58\textwidth}
+    \caption{Classification Metrics Across All Stocks (2019 Test Period)}
+    \label{tab:classification_metrics}
+    \scriptsize
+    \setlength{\tabcolsep}{3.5pt}
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabular}{l|cc|cc|cc|cc|cc|cc}
+    \toprule
+    & \multicolumn{2}{c|}{\textbf{AAPL}} & \multicolumn{2}{c|}{\textbf{GOOG}} & \multicolumn{2}{c|}{\textbf{GOOGL}} & \multicolumn{2}{c|}{\textbf{AMZN}} & \multicolumn{2}{c|}{\textbf{TSLA}} & \multicolumn{2}{c}{\textbf{MSFT}} \\
+    \textbf{Model} & \textbf{Acc} & \textbf{F1} & \textbf{Acc} & \textbf{F1} & \textbf{Acc} & \textbf{F1} & \textbf{Acc} & \textbf{F1} & \textbf{Acc} & \textbf{F1} & \textbf{Acc} & \textbf{F1} \\
+    \midrule
+    \textbf{LR-Tech} & 0.570 & 0.690 & 0.510 & 0.420 & 0.498 & 0.315 & 0.518 & 0.601 & 0.520 & 0.580 & 0.545 & 0.630 \\
+    \textbf{LR-Sent} & 0.494 & 0.513 & 0.530 & 0.510 & 0.514 & 0.508 & 0.550 & 0.589 & 0.510 & 0.565 & 0.560 & 0.650 \\
+    \textbf{RF-Tech} & 0.446 & 0.498 & 0.495 & 0.485 & 0.518 & 0.494 & 0.518 & 0.639 & 0.535 & 0.610 & 0.550 & 0.645 \\
+    \textbf{RF-Sent} & 0.578 & 0.619 & 0.545 & 0.565 & 0.542 & 0.594 & 0.550 & 0.641 & 0.525 & 0.590 & 0.570 & 0.670 \\
+    \textbf{XGB-Tech} & 0.470 & 0.483 & 0.505 & 0.465 & 0.522 & 0.500 & 0.482 & 0.549 & 0.540 & 0.620 & 0.555 & 0.655 \\
+    \textbf{XGB-Sent} & 0.546 & 0.578 & 0.535 & 0.545 & 0.554 & 0.582 & 0.522 & 0.583 & 0.530 & 0.600 & 0.565 & 0.665 \\
+    \bottomrule
+    \end{tabular}
+    \end{table}
+    \vspace{-0.3cm}
+    
+    \subsection*{Returns Comparison}
+    \vspace{-0.2cm}
+    
+    \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{results/figures_company/avg_equity_comparison.png}
-    \caption{Average equity curve comparison}
-\end{subfigure}
-\hfill
-\begin{subfigure}[b]{0.40\textwidth}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{results/figures_company/returns_technical.png}
+        \caption{Technical models returns}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{results/figures_company/returns_sentiment.png}
+        \caption{Sentiment models returns}
+    \end{subfigure}
+    \caption{Overall returns comparison across all stocks and models}
+    \label{fig:returns_all}
+    \end{figure}
+    
+    \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{results/figures_company/overall_drawdown_comparison.png}
-    \caption{Overall drawdown comparison}
-    \label{fig:drawdown_overall}
-\end{subfigure}
-\caption{Overall performance metrics across all stocks}
-\label{fig:performance_metrics}
-\end{figure}
-
-\vspace{-0.3cm}
-
-   \section{Code Repository}
-\label{app:code}
-\vspace{-0.3cm}
-\noindent
-\textbf{GitHub Repository:} \url{https://github.com/liviomanzi11/emotion-driven-markets-Manzinali-Livio}
-
-\vspace{-0.4cm}
-
-\subsection*{Repository Structure}
-\vspace{-0.2cm}
-\noindent The project follows a modular Python architecture:
-\vspace{-0.2cm}
-
-{\small 
-\begin{verbatim}
-emotional-driven-markets/
-├── main.py               # Main entry point
-├── requirements.txt      # Python dependencies (pip)
-├── environment.yml       # Conda dependencies (alternative)
-├── data/
-│   ├── raw/              # Kaggle datasets (CSV)
-│   └── processed/        # Generated features & models
-├── src/
-│   ├── pipelines/        # Data processing modules
-│   ├── models/           # ML model training
-│   ├── strategies/       # Backtesting framework
-│   └── visualization/    # Plotting utilities
-├── results/              # Equity curves & figures
-└── tests/                # Unit tests (57 tests)
-\end{verbatim}}
-
-\vspace{-0.7cm}
-
-\subsection*{Installation \& Reproduction}
-\vspace{-0.1cm}
-\noindent\textbf{1. Clone \& Setup:}
-\vspace{-0.2cm}
-{\small
-\begin{verbatim}
-git clone https://github.com/liviomanzi11/
-  emotion-driven-markets-Manzinali-Livio.git
-cd emotion-driven-markets-Manzinali-Livio
-
-# Option A: Using pip (recommended)               # Option B: Using conda
-python -m venv venv                               conda env create -f environment.yml
-source venv/bin/activate     # macOS/Linux        conda activate emotion-driven-markets
-# venv\Scripts\activate      # Windows
-pip install -r requirements.txt
-
-\end{verbatim}}
-
-\vspace{-0.3cm}
-
-\noindent\textbf{2. Download data from Google Drive:}
-\vspace{0.1cm}
-{\small
-\begin{itemize}[itemsep=3pt,topsep=2pt]
-\item Raw: \texttt{Tweet.csv}, \texttt{Company.csv}, \texttt{Company\_Tweet.csv} $\rightarrow$ \texttt{data/raw/}
-\item Preprocessed: \texttt{tweet\_sentiment.csv}, \texttt{company\_stock\_data.csv} $\rightarrow$ \texttt{data/processed/}
-\end{itemize}}
-
-
-\noindent\textbf{3. Run pipeline:}
-\vspace{0.1cm}
-
-\texttt{python main.py} (30-35 min runtime)
-
-\vspace{0.1cm}
-\noindent Executes: sentiment aggregation, stock data retrieval, feature engineering, model training (48 models), backtesting, and visualization.
-
-\end{document}
+    \begin{subfigure}[b]{0.58\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{results/figures_company/avg_equity_comparison.png}
+        \caption{Average equity curve comparison}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.40\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{results/figures_company/overall_drawdown_comparison.png}
+        \caption{Overall drawdown comparison}
+        \label{fig:drawdown_overall}
+    \end{subfigure}
+    \caption{Overall performance metrics across all stocks}
+    \label{fig:performance_metrics}
+    \end{figure}
+    
+    \vspace{-0.3cm}
+    
+       \section{Code Repository}
+    \label{app:code}
+    \vspace{-0.3cm}
+    \noindent
+    \textbf{GitHub Repository:} \url{https://github.com/liviomanzi11/emotion-driven-markets-Manzinali-Livio}
+    
+    \vspace{-0.4cm}
+    
+    \subsection*{Repository Structure}
+    \vspace{-0.2cm}
+    \noindent The project follows a modular Python architecture:
+    \vspace{-0.2cm}
+    
+    {\small 
+    \begin{verbatim}
+    emotional-driven-markets/
+    ├── main.py               # Main entry point
+    ├── requirements.txt      # Python dependencies (pip)
+    ├── environment.yml       # Conda dependencies (alternative)
+    ├── data/
+    │   ├── raw/              # Kaggle datasets (CSV)
+    │   └── processed/        # Generated features & models
+    ├── src/
+    │   ├── pipelines/        # Data processing modules
+    │   ├── models/           # ML model training
+    │   ├── strategies/       # Backtesting framework
+    │   └── visualization/    # Plotting utilities
+    ├── results/              # Equity curves & figures
+    └── tests/                # Unit tests (57 tests)
+    \end{verbatim}}
+    
+    \vspace{-0.7cm}
+    
+    \subsection*{Installation \& Reproduction}
+    \vspace{-0.1cm}
+    \noindent\textbf{1. Clone \& Setup:}
+    \vspace{-0.2cm}
+    {\small
+    \begin{verbatim}
+    git clone https://github.com/liviomanzi11/
+      emotion-driven-markets-Manzinali-Livio.git
+    cd emotion-driven-markets-Manzinali-Livio
+    
+    # Option A: Using pip (recommended)               # Option B: Using conda
+    python -m venv venv                               conda env create -f environment.yml
+    source venv/bin/activate     # macOS/Linux        conda activate emotion-driven-markets
+    # venv\Scripts\activate      # Windows
+    pip install -r requirements.txt
+    
+    \end{verbatim}}
+    
+    \vspace{-0.3cm}
+    
+    \noindent\textbf{2. Download data from Google Drive:}
+    \vspace{0.1cm}
+    {\small
+    \begin{itemize}[itemsep=3pt,topsep=2pt]
+    \item Raw: \texttt{Tweet.csv}, \texttt{Company.csv}, \texttt{Company\_Tweet.csv} $\rightarrow$ \texttt{data/raw/}
+    \item Preprocessed: \texttt{tweet\_sentiment.csv}, \texttt{company\_stock\_data.csv} $\rightarrow$ \texttt{data/processed/}
+    \end{itemize}}
+    
+    
+    \noindent\textbf{3. Run pipeline:}
+    \vspace{0.1cm}
+    
+    \texttt{python main.py} (30-35 min runtime)
+    
+    \vspace{0.1cm}
+    \noindent Executes: sentiment aggregation, stock data retrieval, feature engineering, model training (48 models), backtesting, and visualization.
+    
+    \end{document}
